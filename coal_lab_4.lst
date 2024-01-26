@@ -1,0 +1,2447 @@
+Microsoft (R) Macro Assembler Version 14.37.32824.0	    01/27/24 01:14:55
+Main.asm						     Page 1 - 1
+
+
+				;<---------------------Description------------------------->
+				;	ROCK PAPER SCISSOR GAME
+				;	Used functions
+				;	ASCII (ROCK,SCISSOR,GAME LOGO,PAPER)
+				;	RANDOM NUMBER GENERATE FOR COMPUTER CHOICE
+				;	RANDOM NUMBER GENERATE FOR USER CHOICE
+				;	STORE GAME REULT AND SHOW PREVIOUS SCORE
+
+
+
+				   ;project rock paper scissor game
+				   ;rock=1,paper=2,scissor=3
+
+				include irvine32.inc
+			      C ; Include file for Irvine32.lib             (Irvine32.inc)
+			      C 
+			      C ;OPTION CASEMAP:NONE		; optional: make identifiers case-sensitive
+			      C 
+			      C INCLUDE SmallWin.inc		; MS-Windows prototypes, structures, and constants
+			      C .NOLIST
+			      C .LIST
+			      C 
+			      C INCLUDE VirtualKeys.inc
+			      C ; VirtualKeys.inc
+			      C .NOLIST
+			      C .LIST
+			      C 
+			      C 
+			      C .NOLIST
+			      C .LIST
+			      C 
+				include macros.inc
+			      C .NOLIST
+			      C .LIST
+			      C 
+ = 00000014			max = 20
+ 00000000			.data
+ 00000000 00000000		user_score dd 0
+ 00000004 00000000		computer_choose dd ?
+ 00000008 00000000		user_choose dd ?
+ 0000000C 00000000		computer_score dd 0
+ 00000010 00000000		check dd ?
+ 00000014 75 73 65 72 6E	u_file_1 byte "username.txt",0
+	   61 6D 65 2E 74
+	   78 74 00
+ 00000021 75 73 65 72 73	u_file_2 byte "userscore.txt",0
+	   63 6F 72 65 2E
+	   74 78 74 00
+ 0000002F 00000000		u_file_h_1 handle ?
+ 00000033 00000000		u_file_h_2 handle ?
+
+ 00000037  00000014 [		user_name dd max dup(?)
+	    00000000
+	   ]
+ 00000087  00000003 [		u_s dd 3 dup(?)
+	    00000000
+	   ]
+ 00000093 00000000		u_name dd ?
+ 00000097  00000005 [		arr1 dd 5 dup(?)
+	    00000000
+	   ]
+
+ 00000000			.code
+
+ 00000000			display_game proc
+ 00000000  E8 00000000 E	call crlf
+				mwrite"						+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+ ",0
+			     1	;
+Main.asm(37) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(37): Main Line Code
+ 000000AB		     1		.data		
+ 000000AB 09 09 09 09 09     1		??0000 BYTE "						+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+ ",0	
+	   09 2B 2D 2B 2D
+	   2B 2D 2B 2D 2B
+	   20 2B 2D 2B 2D
+	   2B 2D 2B 2D 2B
+	   2D 2B 20 2B 2D
+	   2B 2D 2B 2D 2B
+	   2D 2B 2D 2B 2D
+	   2B 2D 2B 20 2B
+	   2D 2B 2D 2B 2D
+	   2B 2D 2B 20 00
+ 00000005		     1		.code
+ 00000005  52		     1		push	edx
+ 00000006  BA 000000AB R     1		mov	edx,OFFSET ??0000
+ 0000000B  E8 00000000 E     1		call	WriteString
+ 00000010  5A		     1		pop	edx
+ 00000011  E8 00000000 E	call crlf
+				mwrite"						|R|O|C|K| |P|A|P|E|R| |S|C|I|S|S|O|R| |G|A|M|E|	",0
+			     1	;
+Main.asm(39) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(39): Main Line Code
+ 000000E2		     1		.data		
+ 000000E2 09 09 09 09 09     1		??0001 BYTE "						|R|O|C|K| |P|A|P|E|R| |S|C|I|S|S|O|R| |G|A|M|E|	",0	
+	   09 7C 52 7C 4F
+	   7C 43 7C 4B 7C
+	   20 7C 50 7C 41
+	   7C 50 7C 45 7C
+	   52 7C 20 7C 53
+	   7C 43 7C 49 7C
+	   53 7C 53 7C 4F
+	   7C 52 7C 20 7C
+	   47 7C 41 7C 4D
+	   7C 45 7C 09 00
+ 00000016		     1		.code
+ 00000016  52		     1		push	edx
+ 00000017  BA 000000E2 R     1		mov	edx,OFFSET ??0001
+ 0000001C  E8 00000000 E     1		call	WriteString
+ 00000021  5A		     1		pop	edx
+ 00000022  E8 00000000 E	call crlf
+				mwrite"						+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+   ",0                                                          
+			     1	;
+Main.asm(41) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(41): Main Line Code
+ 00000119		     1		.data		
+ 00000119 09 09 09 09 09     1		??0002 BYTE "						+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+   ",0	
+	   09 2B 2D 2B 2D
+	   2B 2D 2B 2D 2B
+	   20 2B 2D 2B 2D
+	   2B 2D 2B 2D 2B
+	   2D 2B 20 2B 2D
+	   2B 2D 2B 2D 2B
+	   2D 2B 2D 2B 2D
+	   2B 2D 2B 20 2B
+	   2D 2B 2D 2B 2D
+	   2B 2D 2B 20 20
+	   20 00
+ 00000027		     1		.code
+ 00000027  52		     1		push	edx
+ 00000028  BA 00000119 R     1		mov	edx,OFFSET ??0002
+ 0000002D  E8 00000000 E     1		call	WriteString
+ 00000032  5A		     1		pop	edx
+ 00000033  E8 00000000 E	call crlf                                                                                                                                                                                   
+ 00000038  C3			ret
+ 00000039			display_game endp
+										;Scissor ASCII ART
+ 00000039			scissor proc
+ 00000039  E8 00000000 E	call crlf
+				mwrite "    _______",0
+			     1	;
+Main.asm(48) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(48): Main Line Code
+ 00000152		     1		.data		
+ 00000152 20 20 20 20 5F     1		??0003 BYTE "    _______",0	
+	   5F 5F 5F 5F 5F
+	   5F 00
+ 0000003E		     1		.code
+ 0000003E  52		     1		push	edx
+ 0000003F  BA 00000152 R     1		mov	edx,OFFSET ??0003
+ 00000044  E8 00000000 E     1		call	WriteString
+ 00000049  5A		     1		pop	edx
+ 0000004A  E8 00000000 E	call crlf
+				mwrite "---'   ____)____",0
+			     1	;
+Main.asm(50) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(50): Main Line Code
+ 0000015E		     1		.data		
+ 0000015E 2D 2D 2D 27 20     1		??0004 BYTE "---'   ____)____",0	
+	   20 20 5F 5F 5F
+	   5F 29 5F 5F 5F
+	   5F 00
+ 0000004F		     1		.code
+ 0000004F  52		     1		push	edx
+ 00000050  BA 0000015E R     1		mov	edx,OFFSET ??0004
+ 00000055  E8 00000000 E     1		call	WriteString
+ 0000005A  5A		     1		pop	edx
+ 0000005B  E8 00000000 E	call crlf
+				mwrite "          ______)",0
+			     1	;
+Main.asm(52) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(52): Main Line Code
+ 0000016F		     1		.data		
+ 0000016F 20 20 20 20 20     1		??0005 BYTE "          ______)",0	
+	   20 20 20 20 20
+	   5F 5F 5F 5F 5F
+	   5F 29 00
+ 00000060		     1		.code
+ 00000060  52		     1		push	edx
+ 00000061  BA 0000016F R     1		mov	edx,OFFSET ??0005
+ 00000066  E8 00000000 E     1		call	WriteString
+ 0000006B  5A		     1		pop	edx
+ 0000006C  E8 00000000 E	call crlf
+				mwrite "       __________)	SCISSOR",0
+			     1	;
+Main.asm(54) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(54): Main Line Code
+ 00000181		     1		.data		
+ 00000181 20 20 20 20 20     1		??0006 BYTE "       __________)	SCISSOR",0	
+	   20 20 5F 5F 5F
+	   5F 5F 5F 5F 5F
+	   5F 5F 29 09 53
+	   43 49 53 53 4F
+	   52 00
+ 00000071		     1		.code
+ 00000071  52		     1		push	edx
+ 00000072  BA 00000181 R     1		mov	edx,OFFSET ??0006
+ 00000077  E8 00000000 E     1		call	WriteString
+ 0000007C  5A		     1		pop	edx
+ 0000007D  E8 00000000 E	call crlf
+				mwrite "      (____)",0
+			     1	;
+Main.asm(56) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(56): Main Line Code
+ 0000019C		     1		.data		
+ 0000019C 20 20 20 20 20     1		??0007 BYTE "      (____)",0	
+	   20 28 5F 5F 5F
+	   5F 29 00
+ 00000082		     1		.code
+ 00000082  52		     1		push	edx
+ 00000083  BA 0000019C R     1		mov	edx,OFFSET ??0007
+ 00000088  E8 00000000 E     1		call	WriteString
+ 0000008D  5A		     1		pop	edx
+ 0000008E  E8 00000000 E	call crlf
+				mwrite "---.__(___)",0
+			     1	;
+Main.asm(58) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(58): Main Line Code
+ 000001A9		     1		.data		
+ 000001A9 2D 2D 2D 2E 5F     1		??0008 BYTE "---.__(___)",0	
+	   5F 28 5F 5F 5F
+	   29 00
+ 00000093		     1		.code
+ 00000093  52		     1		push	edx
+ 00000094  BA 000001A9 R     1		mov	edx,OFFSET ??0008
+ 00000099  E8 00000000 E     1		call	WriteString
+ 0000009E  5A		     1		pop	edx
+ 0000009F  E8 00000000 E	call crlf
+ 000000A4  C3			ret
+ 000000A5			scissor endp
+											;ROCK ASCII ART
+ 000000A5			rock proc
+
+ 000000A5  E8 00000000 E	call crlf
+				mwrite "    _______ ",0
+			     1	;
+Main.asm(66) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(66): Main Line Code
+ 000001B5		     1		.data		
+ 000001B5 20 20 20 20 5F     1		??0009 BYTE "    _______ ",0	
+	   5F 5F 5F 5F 5F
+	   5F 20 00
+ 000000AA		     1		.code
+ 000000AA  52		     1		push	edx
+ 000000AB  BA 000001B5 R     1		mov	edx,OFFSET ??0009
+ 000000B0  E8 00000000 E     1		call	WriteString
+ 000000B5  5A		     1		pop	edx
+ 000000B6  E8 00000000 E	call crlf
+				mwrite "---'   ____) ",0
+			     1	;
+Main.asm(68) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(68): Main Line Code
+ 000001C2		     1		.data		
+ 000001C2 2D 2D 2D 27 20     1		??000A BYTE "---'   ____) ",0	
+	   20 20 5F 5F 5F
+	   5F 29 20 00
+ 000000BB		     1		.code
+ 000000BB  52		     1		push	edx
+ 000000BC  BA 000001C2 R     1		mov	edx,OFFSET ??000A
+ 000000C1  E8 00000000 E     1		call	WriteString
+ 000000C6  5A		     1		pop	edx
+ 000000C7  E8 00000000 E	call crlf
+				mwrite "      (_____)",0
+			     1	;
+Main.asm(70) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(70): Main Line Code
+ 000001D0		     1		.data		
+ 000001D0 20 20 20 20 20     1		??000B BYTE "      (_____)",0	
+	   20 28 5F 5F 5F
+	   5F 5F 29 00
+ 000000CC		     1		.code
+ 000000CC  52		     1		push	edx
+ 000000CD  BA 000001D0 R     1		mov	edx,OFFSET ??000B
+ 000000D2  E8 00000000 E     1		call	WriteString
+ 000000D7  5A		     1		pop	edx
+ 000000D8  E8 00000000 E	call crlf
+				mwrite "      (_____)		ROCK",0
+			     1	;
+Main.asm(72) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(72): Main Line Code
+ 000001DE		     1		.data		
+ 000001DE 20 20 20 20 20     1		??000C BYTE "      (_____)		ROCK",0	
+	   20 28 5F 5F 5F
+	   5F 5F 29 09 09
+	   52 4F 43 4B 00
+ 000000DD		     1		.code
+ 000000DD  52		     1		push	edx
+ 000000DE  BA 000001DE R     1		mov	edx,OFFSET ??000C
+ 000000E3  E8 00000000 E     1		call	WriteString
+ 000000E8  5A		     1		pop	edx
+ 000000E9  E8 00000000 E	call crlf
+				mwrite "      (____)",0
+			     1	;
+Main.asm(74) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(74): Main Line Code
+ 000001F2		     1		.data		
+ 000001F2 20 20 20 20 20     1		??000D BYTE "      (____)",0	
+	   20 28 5F 5F 5F
+	   5F 29 00
+ 000000EE		     1		.code
+ 000000EE  52		     1		push	edx
+ 000000EF  BA 000001F2 R     1		mov	edx,OFFSET ??000D
+ 000000F4  E8 00000000 E     1		call	WriteString
+ 000000F9  5A		     1		pop	edx
+ 000000FA  E8 00000000 E	call crlf
+				mwrite "---.__(___)",0
+			     1	;
+Main.asm(76) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(76): Main Line Code
+ 000001FF		     1		.data		
+ 000001FF 2D 2D 2D 2E 5F     1		??000E BYTE "---.__(___)",0	
+	   5F 28 5F 5F 5F
+	   29 00
+ 000000FF		     1		.code
+ 000000FF  52		     1		push	edx
+ 00000100  BA 000001FF R     1		mov	edx,OFFSET ??000E
+ 00000105  E8 00000000 E     1		call	WriteString
+ 0000010A  5A		     1		pop	edx
+ 0000010B  E8 00000000 E	call crlf
+
+ 00000110  C3			ret
+ 00000111			rock endp
+												;PAPER ASCII ART
+ 00000111			paper proc
+ 00000111  E8 00000000 E	call crlf
+				mwrite"     _______",0
+			     1	;
+Main.asm(84) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(84): Main Line Code
+ 0000020B		     1		.data		
+ 0000020B 20 20 20 20 20     1		??000F BYTE "     _______",0	
+	   5F 5F 5F 5F 5F
+	   5F 5F 00
+ 00000116		     1		.code
+ 00000116  52		     1		push	edx
+ 00000117  BA 0000020B R     1		mov	edx,OFFSET ??000F
+ 0000011C  E8 00000000 E     1		call	WriteString
+ 00000121  5A		     1		pop	edx
+ 00000122  E8 00000000 E	call crlf
+				mwrite"---'    ____)____",0
+			     1	;
+Main.asm(86) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(86): Main Line Code
+ 00000218		     1		.data		
+ 00000218 2D 2D 2D 27 20     1		??0010 BYTE "---'    ____)____",0	
+	   20 20 20 5F 5F
+	   5F 5F 29 5F 5F
+	   5F 5F 00
+ 00000127		     1		.code
+ 00000127  52		     1		push	edx
+ 00000128  BA 00000218 R     1		mov	edx,OFFSET ??0010
+ 0000012D  E8 00000000 E     1		call	WriteString
+ 00000132  5A		     1		pop	edx
+ 00000133  E8 00000000 E	call crlf
+				mwrite"           ______)",0
+			     1	;
+Main.asm(88) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(88): Main Line Code
+ 0000022A		     1		.data		
+ 0000022A 20 20 20 20 20     1		??0011 BYTE "           ______)",0	
+	   20 20 20 20 20
+	   20 5F 5F 5F 5F
+	   5F 5F 29 00
+ 00000138		     1		.code
+ 00000138  52		     1		push	edx
+ 00000139  BA 0000022A R     1		mov	edx,OFFSET ??0011
+ 0000013E  E8 00000000 E     1		call	WriteString
+ 00000143  5A		     1		pop	edx
+ 00000144  E8 00000000 E	call crlf
+				mwrite"          _______)	PAPER",0
+			     1	;
+Main.asm(90) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(90): Main Line Code
+ 0000023D		     1		.data		
+ 0000023D 20 20 20 20 20     1		??0012 BYTE "          _______)	PAPER",0	
+	   20 20 20 20 20
+	   5F 5F 5F 5F 5F
+	   5F 5F 29 09 50
+	   41 50 45 52 00
+ 00000149		     1		.code
+ 00000149  52		     1		push	edx
+ 0000014A  BA 0000023D R     1		mov	edx,OFFSET ??0012
+ 0000014F  E8 00000000 E     1		call	WriteString
+ 00000154  5A		     1		pop	edx
+ 00000155  E8 00000000 E	call crlf
+				mwrite"         _______)",0
+			     1	;
+Main.asm(92) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(92): Main Line Code
+ 00000256		     1		.data		
+ 00000256 20 20 20 20 20     1		??0013 BYTE "         _______)",0	
+	   20 20 20 20 5F
+	   5F 5F 5F 5F 5F
+	   5F 29 00
+ 0000015A		     1		.code
+ 0000015A  52		     1		push	edx
+ 0000015B  BA 00000256 R     1		mov	edx,OFFSET ??0013
+ 00000160  E8 00000000 E     1		call	WriteString
+ 00000165  5A		     1		pop	edx
+ 00000166  E8 00000000 E	call crlf
+				mwrite"---.__________)",0
+			     1	;
+Main.asm(94) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(94): Main Line Code
+ 00000268		     1		.data		
+ 00000268 2D 2D 2D 2E 5F     1		??0014 BYTE "---.__________)",0	
+	   5F 5F 5F 5F 5F
+	   5F 5F 5F 5F 29
+	   00
+ 0000016B		     1		.code
+ 0000016B  52		     1		push	edx
+ 0000016C  BA 00000268 R     1		mov	edx,OFFSET ??0014
+ 00000171  E8 00000000 E     1		call	WriteString
+ 00000176  5A		     1		pop	edx
+ 00000177  E8 00000000 E	call crlf
+ 0000017C  C3			ret
+ 0000017D			paper endp
+
+ 0000017D			rules proc
+ 0000017D  E8 00000000 E	call crlf
+				mwrite  "---------------------------------",0
+			     1	;
+Main.asm(101) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(101): Main Line Code
+ 00000278		     1		.data		
+ 00000278 2D 2D 2D 2D 2D     1		??0015 BYTE "---------------------------------",0	
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 00
+ 00000182		     1		.code
+ 00000182  52		     1		push	edx
+ 00000183  BA 00000278 R     1		mov	edx,OFFSET ??0015
+ 00000188  E8 00000000 E     1		call	WriteString
+ 0000018D  5A		     1		pop	edx
+ 0000018E  E8 00000000 E	call crlf
+ 00000193  E8 00000000 E	call crlf
+				mwrite "|  1.Rock Wins Against Scissor  |",0
+			     1	;
+Main.asm(104) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(104): Main Line Code
+ 0000029A		     1		.data		
+ 0000029A 7C 20 20 31 2E     1		??0016 BYTE "|  1.Rock Wins Against Scissor  |",0	
+	   52 6F 63 6B 20
+	   57 69 6E 73 20
+	   41 67 61 69 6E
+	   73 74 20 53 63
+	   69 73 73 6F 72
+	   20 20 7C 00
+ 00000198		     1		.code
+ 00000198  52		     1		push	edx
+ 00000199  BA 0000029A R     1		mov	edx,OFFSET ??0016
+ 0000019E  E8 00000000 E     1		call	WriteString
+ 000001A3  5A		     1		pop	edx
+ 000001A4  E8 00000000 E	call crlf
+ 000001A9  E8 00000000 E	call crlf
+				mwrite  "|  2.Scissor Wins Against Paper |",0
+			     1	;
+Main.asm(107) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(107): Main Line Code
+ 000002BC		     1		.data		
+ 000002BC 7C 20 20 32 2E     1		??0017 BYTE "|  2.Scissor Wins Against Paper |",0	
+	   53 63 69 73 73
+	   6F 72 20 57 69
+	   6E 73 20 41 67
+	   61 69 6E 73 74
+	   20 50 61 70 65
+	   72 20 7C 00
+ 000001AE		     1		.code
+ 000001AE  52		     1		push	edx
+ 000001AF  BA 000002BC R     1		mov	edx,OFFSET ??0017
+ 000001B4  E8 00000000 E     1		call	WriteString
+ 000001B9  5A		     1		pop	edx
+ 000001BA  E8 00000000 E	call crlf
+ 000001BF  E8 00000000 E	call crlf
+				mwrite  "|  3.Paper Wins Against Rock    |",0
+			     1	;
+Main.asm(110) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(110): Main Line Code
+ 000002DE		     1		.data		
+ 000002DE 7C 20 20 33 2E     1		??0018 BYTE "|  3.Paper Wins Against Rock    |",0	
+	   50 61 70 65 72
+	   20 57 69 6E 73
+	   20 41 67 61 69
+	   6E 73 74 20 52
+	   6F 63 6B 20 20
+	   20 20 7C 00
+ 000001C4		     1		.code
+ 000001C4  52		     1		push	edx
+ 000001C5  BA 000002DE R     1		mov	edx,OFFSET ??0018
+ 000001CA  E8 00000000 E     1		call	WriteString
+ 000001CF  5A		     1		pop	edx
+ 000001D0  E8 00000000 E	call crlf
+ 000001D5  E8 00000000 E	call crlf
+				mwrite  "---------------------------------",0
+			     1	;
+Main.asm(113) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(113): Main Line Code
+ 00000300		     1		.data		
+ 00000300 2D 2D 2D 2D 2D     1		??0019 BYTE "---------------------------------",0	
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 00
+ 000001DA		     1		.code
+ 000001DA  52		     1		push	edx
+ 000001DB  BA 00000300 R     1		mov	edx,OFFSET ??0019
+ 000001E0  E8 00000000 E     1		call	WriteString
+ 000001E5  5A		     1		pop	edx
+ 000001E6  E8 00000000 E	call crlf
+
+ 000001EB  C3			ret
+ 000001EC			rules endp
+
+										;GENERATE RANDOM NUMBER FOR COMPUTER CHOICE
+ 000001EC			computer proc
+ 000001EC  B8 00000003		mov eax,3
+ 000001F1  E8 00000000 E	call randomrange
+ 000001F6  40			inc eax
+ 000001F7  A3 00000004 R	mov computer_choose,eax
+ 000001FC  C3			ret
+ 000001FD			computer endp
+										;USER PREVIOUS SCORE
+ 000001FD			highest_score proc
+ 000001FD  BA 00000014 R	mov edx,offset u_file_1
+ 00000202  E8 00000000 E	call openinputfile
+ 00000207  A3 0000002F R	mov u_file_h_1,eax
+				mwrite "User Name: ",0
+			     1	;
+Main.asm(132) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(132): Main Line Code
+ 00000322		     1		.data		
+ 00000322 55 73 65 72 20     1		??001A BYTE "User Name: ",0	
+	   4E 61 6D 65 3A
+	   20 00
+ 0000020C		     1		.code
+ 0000020C  52		     1		push	edx
+ 0000020D  BA 00000322 R     1		mov	edx,OFFSET ??001A
+ 00000212  E8 00000000 E     1		call	WriteString
+ 00000217  5A		     1		pop	edx
+ 00000218  BA 00000037 R	mov edx,offset user_name
+ 0000021D  A1 0000002F R	mov eax,u_file_h_1
+ 00000222  B9 00000014		mov ecx,20
+ 00000227  E8 00000000 E	call readfromfile
+ 0000022C  BA 00000037 R	mov edx,offset user_name
+ 00000231  B9 00000014		mov ecx,20
+ 00000236  E8 00000000 E	call writestring
+ 0000023B  A1 0000002F R	mov eax,u_file_h_1
+ 00000240  E8 00000000 E	call closefile
+
+ 00000245  BA 00000021 R	mov edx,offset u_file_2
+ 0000024A  E8 00000000 E	call openinputfile
+ 0000024F  A3 00000033 R	mov u_file_h_2,eax
+ 00000254  BA 00000087 R	mov edx,offset u_s
+ 00000259  B9 00000001		mov ecx,1
+ 0000025E  E8 00000000 E	call readfromfile
+ 00000263  E8 00000000 E	call crlf
+				mwrite "User Previous Score: ",0
+			     1	;
+Main.asm(150) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(150): Main Line Code
+ 0000032E		     1		.data		
+ 0000032E 55 73 65 72 20     1		??001B BYTE "User Previous Score: ",0	
+	   50 72 65 76 69
+	   6F 75 73 20 53
+	   63 6F 72 65 3A
+	   20 00
+ 00000268		     1		.code
+ 00000268  52		     1		push	edx
+ 00000269  BA 0000032E R     1		mov	edx,OFFSET ??001B
+ 0000026E  E8 00000000 E     1		call	WriteString
+ 00000273  5A		     1		pop	edx
+ 00000274  BA 00000087 R	mov edx,offset u_s
+ 00000279  A1 00000033 R	mov eax,u_file_h_2
+ 0000027E  B9 00000001		mov ecx,1
+ 00000283  E8 00000000 E	call writestring
+ 00000288  A1 00000033 R	mov eax,u_file_h_2
+ 0000028D  E8 00000000 E	call closefile
+ 00000292  E8 00000000 E	call crlf
+ 00000297  E8 00000000 E	call  waitmsg
+ 0000029C  C3			ret
+ 0000029D			highest_score endp
+
+
+										;GAME START
+ 0000029D			game_start proc
+ 0000029D  C7 05 00000000 R	mov user_score,0
+	   00000000
+ 000002A7  C7 05 0000000C R	mov computer_score,0
+	   00000000
+ 000002B1  C7 05 00000010 R	mov check,5
+	   00000005
+ 000002BB			start:
+				.while check>=1
+ 000002BB  E9 00000606	   *	    jmp    @C0001
+ 000002C0		   *@C0002:
+
+				.if user_score==9
+ 000002C0  83 3D 00000000 R
+	   09		   *	    cmp    user_score, 009h
+ 000002C7  75 20	   *	    jne    @C0003
+				mwrite "You Have reached the score limit ,You have defeated the computer badly ",0
+			     1	;
+Main.asm(172) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(172): Main Line Code
+ 00000344		     1		.data		
+ 00000344 59 6F 75 20 48     1		??001C BYTE "You Have reached the score limit ,You have defeated the computer badly ",0	
+	   61 76 65 20 72
+	   65 61 63 68 65
+	   64 20 74 68 65
+	   20 73 63 6F 72
+	   65 20 6C 69 6D
+	   69 74 20 2C 59
+	   6F 75 20 68 61
+	   76 65 20 64 65
+	   66 65 61 74 65
+	   64 20 74 68 65
+	   20 63 6F 6D 70
+	   75 74 65 72 20
+	   62 61 64 6C 79
+	   20 00
+ 000002C9		     1		.code
+ 000002C9  52		     1		push	edx
+ 000002CA  BA 00000344 R     1		mov	edx,OFFSET ??001C
+ 000002CF  E8 00000000 E     1		call	WriteString
+ 000002D4  5A		     1		pop	edx
+ 000002D5  E8 00000000 E	call crlf
+ 000002DA  E8 00000000 E	call waitmsg
+ 000002DF  E8 00000000 E	call crlf
+ 000002E4  E9 000005F4		jmp exit1
+				.endif
+
+ 000002E9		   *@C0003:
+ 000002E9  E8 FFFFFEFE		call computer
+				mwrite "User Health :",0
+			     1	;
+Main.asm(180) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(180): Main Line Code
+ 0000038C		     1		.data		
+ 0000038C 55 73 65 72 20     1		??001D BYTE "User Health :",0	
+	   48 65 61 6C 74
+	   68 20 3A 00
+ 000002EE		     1		.code
+ 000002EE  52		     1		push	edx
+ 000002EF  BA 0000038C R     1		mov	edx,OFFSET ??001D
+ 000002F4  E8 00000000 E     1		call	WriteString
+ 000002F9  5A		     1		pop	edx
+ 000002FA  A1 00000010 R	mov eax,check
+ 000002FF  E8 00000000 E	call writedec
+ 00000304  E8 00000000 E	call crlf
+				;mov eax,computer_choose
+				;call writedec
+				mwrite "Enter Your Choice(Rock=1,Paper=2,Scissor=3,Exit=4): ",0
+			     1	;
+Main.asm(186) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(186): Main Line Code
+ 0000039A		     1		.data		
+ 0000039A 45 6E 74 65 72     1		??001E BYTE "Enter Your Choice(Rock=1,Paper=2,Scissor=3,Exit=4): ",0	
+	   20 59 6F 75 72
+	   20 43 68 6F 69
+	   63 65 28 52 6F
+	   63 6B 3D 31 2C
+	   50 61 70 65 72
+	   3D 32 2C 53 63
+	   69 73 73 6F 72
+	   3D 33 2C 45 78
+	   69 74 3D 34 29
+	   3A 20 00
+ 00000309		     1		.code
+ 00000309  52		     1		push	edx
+ 0000030A  BA 0000039A R     1		mov	edx,OFFSET ??001E
+ 0000030F  E8 00000000 E     1		call	WriteString
+ 00000314  5A		     1		pop	edx
+ 00000315  E8 00000000 E	call readdec
+ 0000031A  A3 00000008 R	mov user_choose,eax
+
+				.if user_choose==1 && computer_choose==1
+ 0000031F  83 3D 00000008 R
+	   01		   *	    cmp    user_choose, 001h
+ 00000326  75 69	   *	    jne    @C0005
+ 00000328  83 3D 00000004 R
+	   01		   *	    cmp    computer_choose, 001h
+ 0000032F  75 60	   *	    jne    @C0005
+				mwrite"User Choose:",0
+			     1	;
+Main.asm(191) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(191): Main Line Code
+ 000003CF		     1		.data		
+ 000003CF 55 73 65 72 20     1		??001F BYTE "User Choose:",0	
+	   43 68 6F 6F 73
+	   65 3A 00
+ 00000331		     1		.code
+ 00000331  52		     1		push	edx
+ 00000332  BA 000003CF R     1		mov	edx,OFFSET ??001F
+ 00000337  E8 00000000 E     1		call	WriteString
+ 0000033C  5A		     1		pop	edx
+ 0000033D  E8 00000000 E	call crlf
+ 00000342  E8 FFFFFD5E		call rock
+ 00000347  E8 00000000 E	call crlf
+				mwrite"Computer Choose:",0
+			     1	;
+Main.asm(195) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(195): Main Line Code
+ 000003DC		     1		.data		
+ 000003DC 43 6F 6D 70 75     1		??0020 BYTE "Computer Choose:",0	
+	   74 65 72 20 43
+	   68 6F 6F 73 65
+	   3A 00
+ 0000034C		     1		.code
+ 0000034C  52		     1		push	edx
+ 0000034D  BA 000003DC R     1		mov	edx,OFFSET ??0020
+ 00000352  E8 00000000 E     1		call	WriteString
+ 00000357  5A		     1		pop	edx
+ 00000358  E8 00000000 E	call crlf
+ 0000035D  E8 FFFFFD43		call rock
+ 00000362  E8 00000000 E	call crlf
+				mwrite "Tie Match",0
+			     1	;
+Main.asm(199) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(199): Main Line Code
+ 000003ED		     1		.data		
+ 000003ED 54 69 65 20 4D     1		??0021 BYTE "Tie Match",0	
+	   61 74 63 68 00
+ 00000367		     1		.code
+ 00000367  52		     1		push	edx
+ 00000368  BA 000003ED R     1		mov	edx,OFFSET ??0021
+ 0000036D  E8 00000000 E     1		call	WriteString
+ 00000372  5A		     1		pop	edx
+ 00000373  E8 00000000 E	call crlf
+
+ 00000378  E8 00000000 E	call waitmsg
+ 0000037D  E8 00000000 E	call clrscr
+ 00000382  E8 FFFFFC79		call display_game
+ 00000387  E9 FFFFFF2F		jmp start
+
+
+				.elseif user_choose==2 && computer_choose==2
+ 0000038C  E9 00000535	   *	    jmp    @C0008
+ 00000391		   *@C0005:
+ 00000391  83 3D 00000008 R
+	   02		   *	    cmp    user_choose, 002h
+ 00000398  75 69	   *	    jne    @C0009
+ 0000039A  83 3D 00000004 R
+	   02		   *	    cmp    computer_choose, 002h
+ 000003A1  75 60	   *	    jne    @C0009
+				mwrite"User Choose:",0
+			     1	;
+Main.asm(209) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(209): Main Line Code
+ 000003F7		     1		.data		
+ 000003F7 55 73 65 72 20     1		??0022 BYTE "User Choose:",0	
+	   43 68 6F 6F 73
+	   65 3A 00
+ 000003A3		     1		.code
+ 000003A3  52		     1		push	edx
+ 000003A4  BA 000003F7 R     1		mov	edx,OFFSET ??0022
+ 000003A9  E8 00000000 E     1		call	WriteString
+ 000003AE  5A		     1		pop	edx
+ 000003AF  E8 00000000 E	call crlf
+ 000003B4  E8 FFFFFD58		call paper
+ 000003B9  E8 00000000 E	call crlf
+				mwrite"Computer Choose:",0
+			     1	;
+Main.asm(213) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(213): Main Line Code
+ 00000404		     1		.data		
+ 00000404 43 6F 6D 70 75     1		??0023 BYTE "Computer Choose:",0	
+	   74 65 72 20 43
+	   68 6F 6F 73 65
+	   3A 00
+ 000003BE		     1		.code
+ 000003BE  52		     1		push	edx
+ 000003BF  BA 00000404 R     1		mov	edx,OFFSET ??0023
+ 000003C4  E8 00000000 E     1		call	WriteString
+ 000003C9  5A		     1		pop	edx
+ 000003CA  E8 00000000 E	call crlf
+ 000003CF  E8 FFFFFD3D		call paper
+ 000003D4  E8 00000000 E	call crlf
+				mwrite "Tie Match",0
+			     1	;
+Main.asm(217) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(217): Main Line Code
+ 00000415		     1		.data		
+ 00000415 54 69 65 20 4D     1		??0024 BYTE "Tie Match",0	
+	   61 74 63 68 00
+ 000003D9		     1		.code
+ 000003D9  52		     1		push	edx
+ 000003DA  BA 00000415 R     1		mov	edx,OFFSET ??0024
+ 000003DF  E8 00000000 E     1		call	WriteString
+ 000003E4  5A		     1		pop	edx
+ 000003E5  E8 00000000 E	call crlf
+
+ 000003EA  E8 00000000 E	call waitmsg
+ 000003EF  E8 00000000 E	call clrscr
+ 000003F4  E8 FFFFFC07		call display_game
+ 000003F9  E9 FFFFFEBD		jmp start
+
+
+				.elseif user_choose==3 && computer_choose==3
+ 000003FE  E9 000004C3	   *	    jmp    @C000C
+ 00000403		   *@C0009:
+ 00000403  83 3D 00000008 R
+	   03		   *	    cmp    user_choose, 003h
+ 0000040A  75 69	   *	    jne    @C000D
+ 0000040C  83 3D 00000004 R
+	   03		   *	    cmp    computer_choose, 003h
+ 00000413  75 60	   *	    jne    @C000D
+				mwrite"User Choose:",0
+			     1	;
+Main.asm(227) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(227): Main Line Code
+ 0000041F		     1		.data		
+ 0000041F 55 73 65 72 20     1		??0025 BYTE "User Choose:",0	
+	   43 68 6F 6F 73
+	   65 3A 00
+ 00000415		     1		.code
+ 00000415  52		     1		push	edx
+ 00000416  BA 0000041F R     1		mov	edx,OFFSET ??0025
+ 0000041B  E8 00000000 E     1		call	WriteString
+ 00000420  5A		     1		pop	edx
+ 00000421  E8 00000000 E	call crlf
+ 00000426  E8 FFFFFC0E		call scissor
+ 0000042B  E8 00000000 E	call crlf
+				mwrite"Computer Choose:",0
+			     1	;
+Main.asm(231) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(231): Main Line Code
+ 0000042C		     1		.data		
+ 0000042C 43 6F 6D 70 75     1		??0026 BYTE "Computer Choose:",0	
+	   74 65 72 20 43
+	   68 6F 6F 73 65
+	   3A 00
+ 00000430		     1		.code
+ 00000430  52		     1		push	edx
+ 00000431  BA 0000042C R     1		mov	edx,OFFSET ??0026
+ 00000436  E8 00000000 E     1		call	WriteString
+ 0000043B  5A		     1		pop	edx
+ 0000043C  E8 00000000 E	call crlf
+ 00000441  E8 FFFFFBF3		call scissor
+ 00000446  E8 00000000 E	call crlf
+				mwrite "Tie Match",0
+			     1	;
+Main.asm(235) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(235): Main Line Code
+ 0000043D		     1		.data		
+ 0000043D 54 69 65 20 4D     1		??0027 BYTE "Tie Match",0	
+	   61 74 63 68 00
+ 0000044B		     1		.code
+ 0000044B  52		     1		push	edx
+ 0000044C  BA 0000043D R     1		mov	edx,OFFSET ??0027
+ 00000451  E8 00000000 E     1		call	WriteString
+ 00000456  5A		     1		pop	edx
+ 00000457  E8 00000000 E	call crlf
+
+ 0000045C  E8 00000000 E	call waitmsg
+ 00000461  E8 00000000 E	call clrscr
+ 00000466  E8 FFFFFB95		call display_game
+ 0000046B  E9 FFFFFE4B		jmp start
+
+
+
+				.elseif user_choose==1 && computer_choose==2
+ 00000470  E9 00000451	   *	    jmp    @C0010
+ 00000475		   *@C000D:
+ 00000475  83 3D 00000008 R
+	   01		   *	    cmp    user_choose, 001h
+ 0000047C  0F 85 000000AA  *	    jne    @C0011
+ 00000482  83 3D 00000004 R
+	   02		   *	    cmp    computer_choose, 002h
+ 00000489  0F 85 0000009D  *	    jne    @C0011
+				mwrite"User Choose:",0
+			     1	;
+Main.asm(246) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(246): Main Line Code
+ 00000447		     1		.data		
+ 00000447 55 73 65 72 20     1		??0028 BYTE "User Choose:",0	
+	   43 68 6F 6F 73
+	   65 3A 00
+ 0000048F		     1		.code
+ 0000048F  52		     1		push	edx
+ 00000490  BA 00000447 R     1		mov	edx,OFFSET ??0028
+ 00000495  E8 00000000 E     1		call	WriteString
+ 0000049A  5A		     1		pop	edx
+ 0000049B  E8 00000000 E	call crlf
+ 000004A0  E8 FFFFFC00		call rock
+ 000004A5  E8 00000000 E	call crlf
+				mwrite"Computer Choose:",0
+			     1	;
+Main.asm(250) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(250): Main Line Code
+ 00000454		     1		.data		
+ 00000454 43 6F 6D 70 75     1		??0029 BYTE "Computer Choose:",0	
+	   74 65 72 20 43
+	   68 6F 6F 73 65
+	   3A 00
+ 000004AA		     1		.code
+ 000004AA  52		     1		push	edx
+ 000004AB  BA 00000454 R     1		mov	edx,OFFSET ??0029
+ 000004B0  E8 00000000 E     1		call	WriteString
+ 000004B5  5A		     1		pop	edx
+ 000004B6  E8 00000000 E	call crlf
+ 000004BB  E8 FFFFFC51		call paper
+ 000004C0  E8 00000000 E	call crlf
+				mwrite "Computer Win!",0
+			     1	;
+Main.asm(254) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(254): Main Line Code
+ 00000465		     1		.data		
+ 00000465 43 6F 6D 70 75     1		??002A BYTE "Computer Win!",0	
+	   74 65 72 20 57
+	   69 6E 21 00
+ 000004C5		     1		.code
+ 000004C5  52		     1		push	edx
+ 000004C6  BA 00000465 R     1		mov	edx,OFFSET ??002A
+ 000004CB  E8 00000000 E     1		call	WriteString
+ 000004D0  5A		     1		pop	edx
+ 000004D1  FF 0D 00000010 R	dec check
+ 000004D7  E8 00000000 E	call crlf
+ 000004DC  FF 05 0000000C R	inc computer_score
+				mwrite "Score Board: User= ",0
+			     1	;
+Main.asm(258) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(258): Main Line Code
+ 00000473		     1		.data		
+ 00000473 53 63 6F 72 65     1		??002B BYTE "Score Board: User= ",0	
+	   20 42 6F 61 72
+	   64 3A 20 55 73
+	   65 72 3D 20 00
+ 000004E2		     1		.code
+ 000004E2  52		     1		push	edx
+ 000004E3  BA 00000473 R     1		mov	edx,OFFSET ??002B
+ 000004E8  E8 00000000 E     1		call	WriteString
+ 000004ED  5A		     1		pop	edx
+ 000004EE  A1 00000000 R	mov eax,user_score
+ 000004F3  E8 00000000 E	call writedec
+				mwrite ", Computer= ",0
+			     1	;
+Main.asm(261) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(261): Main Line Code
+ 00000487		     1		.data		
+ 00000487 2C 20 43 6F 6D     1		??002C BYTE ", Computer= ",0	
+	   70 75 74 65 72
+	   3D 20 00
+ 000004F8		     1		.code
+ 000004F8  52		     1		push	edx
+ 000004F9  BA 00000487 R     1		mov	edx,OFFSET ??002C
+ 000004FE  E8 00000000 E     1		call	WriteString
+ 00000503  5A		     1		pop	edx
+ 00000504  A1 0000000C R	mov eax,computer_score
+ 00000509  E8 00000000 E	call writedec
+ 0000050E  E8 00000000 E	call crlf
+
+ 00000513  E8 00000000 E	call waitmsg
+ 00000518  E8 00000000 E	call clrscr
+ 0000051D  E8 FFFFFADE		call display_game
+ 00000522  E9 FFFFFD94		jmp start
+
+
+				.elseif user_choose==2 && computer_choose==1
+ 00000527  E9 0000039A	   *	    jmp    @C0014
+ 0000052C		   *@C0011:
+ 0000052C  83 3D 00000008 R
+	   02		   *	    cmp    user_choose, 002h
+ 00000533  0F 85 000000A4  *	    jne    @C0015
+ 00000539  83 3D 00000004 R
+	   01		   *	    cmp    computer_choose, 001h
+ 00000540  0F 85 00000097  *	    jne    @C0015
+				mwrite"User Choose:",0
+			     1	;
+Main.asm(273) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(273): Main Line Code
+ 00000494		     1		.data		
+ 00000494 55 73 65 72 20     1		??002D BYTE "User Choose:",0	
+	   43 68 6F 6F 73
+	   65 3A 00
+ 00000546		     1		.code
+ 00000546  52		     1		push	edx
+ 00000547  BA 00000494 R     1		mov	edx,OFFSET ??002D
+ 0000054C  E8 00000000 E     1		call	WriteString
+ 00000551  5A		     1		pop	edx
+ 00000552  E8 00000000 E	call crlf
+ 00000557  E8 FFFFFBB5		call paper
+ 0000055C  E8 00000000 E	call crlf
+				mwrite"Computer Choose:",0
+			     1	;
+Main.asm(277) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(277): Main Line Code
+ 000004A1		     1		.data		
+ 000004A1 43 6F 6D 70 75     1		??002E BYTE "Computer Choose:",0	
+	   74 65 72 20 43
+	   68 6F 6F 73 65
+	   3A 00
+ 00000561		     1		.code
+ 00000561  52		     1		push	edx
+ 00000562  BA 000004A1 R     1		mov	edx,OFFSET ??002E
+ 00000567  E8 00000000 E     1		call	WriteString
+ 0000056C  5A		     1		pop	edx
+ 0000056D  E8 00000000 E	call crlf
+ 00000572  E8 FFFFFB2E		call rock
+ 00000577  E8 00000000 E	call crlf
+				mwrite "User Win!",0
+			     1	;
+Main.asm(281) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(281): Main Line Code
+ 000004B2		     1		.data		
+ 000004B2 55 73 65 72 20     1		??002F BYTE "User Win!",0	
+	   57 69 6E 21 00
+ 0000057C		     1		.code
+ 0000057C  52		     1		push	edx
+ 0000057D  BA 000004B2 R     1		mov	edx,OFFSET ??002F
+ 00000582  E8 00000000 E     1		call	WriteString
+ 00000587  5A		     1		pop	edx
+ 00000588  E8 00000000 E	call crlf
+ 0000058D  FF 05 00000000 R	inc user_score
+				mwrite "Score Board: User= ",0
+			     1	;
+Main.asm(284) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(284): Main Line Code
+ 000004BC		     1		.data		
+ 000004BC 53 63 6F 72 65     1		??0030 BYTE "Score Board: User= ",0	
+	   20 42 6F 61 72
+	   64 3A 20 55 73
+	   65 72 3D 20 00
+ 00000593		     1		.code
+ 00000593  52		     1		push	edx
+ 00000594  BA 000004BC R     1		mov	edx,OFFSET ??0030
+ 00000599  E8 00000000 E     1		call	WriteString
+ 0000059E  5A		     1		pop	edx
+ 0000059F  A1 00000000 R	mov eax,user_score
+ 000005A4  E8 00000000 E	call writedec
+				mwrite ", Computer= ",0
+			     1	;
+Main.asm(287) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(287): Main Line Code
+ 000004D0		     1		.data		
+ 000004D0 2C 20 43 6F 6D     1		??0031 BYTE ", Computer= ",0	
+	   70 75 74 65 72
+	   3D 20 00
+ 000005A9		     1		.code
+ 000005A9  52		     1		push	edx
+ 000005AA  BA 000004D0 R     1		mov	edx,OFFSET ??0031
+ 000005AF  E8 00000000 E     1		call	WriteString
+ 000005B4  5A		     1		pop	edx
+ 000005B5  A1 0000000C R	mov eax,computer_score
+ 000005BA  E8 00000000 E	call writedec
+ 000005BF  E8 00000000 E	call crlf
+
+
+ 000005C4  E8 00000000 E	call waitmsg
+ 000005C9  E8 00000000 E	call clrscr
+ 000005CE  E8 FFFFFA2D		call display_game
+ 000005D3  E9 FFFFFCE3		jmp start
+
+
+				.elseif user_choose==1 && computer_choose==3
+ 000005D8  E9 000002E9	   *	    jmp    @C0018
+ 000005DD		   *@C0015:
+ 000005DD  83 3D 00000008 R
+	   01		   *	    cmp    user_choose, 001h
+ 000005E4  0F 85 000000A4  *	    jne    @C0019
+ 000005EA  83 3D 00000004 R
+	   03		   *	    cmp    computer_choose, 003h
+ 000005F1  0F 85 00000097  *	    jne    @C0019
+				mwrite"User Choose:",0
+			     1	;
+Main.asm(300) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(300): Main Line Code
+ 000004DD		     1		.data		
+ 000004DD 55 73 65 72 20     1		??0032 BYTE "User Choose:",0	
+	   43 68 6F 6F 73
+	   65 3A 00
+ 000005F7		     1		.code
+ 000005F7  52		     1		push	edx
+ 000005F8  BA 000004DD R     1		mov	edx,OFFSET ??0032
+ 000005FD  E8 00000000 E     1		call	WriteString
+ 00000602  5A		     1		pop	edx
+ 00000603  E8 00000000 E	call crlf
+ 00000608  E8 FFFFFA98		call rock
+ 0000060D  E8 00000000 E	call crlf
+				mwrite"Computer Choose:",0
+			     1	;
+Main.asm(304) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(304): Main Line Code
+ 000004EA		     1		.data		
+ 000004EA 43 6F 6D 70 75     1		??0033 BYTE "Computer Choose:",0	
+	   74 65 72 20 43
+	   68 6F 6F 73 65
+	   3A 00
+ 00000612		     1		.code
+ 00000612  52		     1		push	edx
+ 00000613  BA 000004EA R     1		mov	edx,OFFSET ??0033
+ 00000618  E8 00000000 E     1		call	WriteString
+ 0000061D  5A		     1		pop	edx
+ 0000061E  E8 00000000 E	call crlf
+ 00000623  E8 FFFFFA11		call scissor
+ 00000628  E8 00000000 E	call crlf
+				mwrite "User Win!",0
+			     1	;
+Main.asm(308) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(308): Main Line Code
+ 000004FB		     1		.data		
+ 000004FB 55 73 65 72 20     1		??0034 BYTE "User Win!",0	
+	   57 69 6E 21 00
+ 0000062D		     1		.code
+ 0000062D  52		     1		push	edx
+ 0000062E  BA 000004FB R     1		mov	edx,OFFSET ??0034
+ 00000633  E8 00000000 E     1		call	WriteString
+ 00000638  5A		     1		pop	edx
+ 00000639  E8 00000000 E	call crlf
+ 0000063E  FF 05 00000000 R	inc user_score
+				mwrite "Score Board: User= ",0
+			     1	;
+Main.asm(311) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(311): Main Line Code
+ 00000505		     1		.data		
+ 00000505 53 63 6F 72 65     1		??0035 BYTE "Score Board: User= ",0	
+	   20 42 6F 61 72
+	   64 3A 20 55 73
+	   65 72 3D 20 00
+ 00000644		     1		.code
+ 00000644  52		     1		push	edx
+ 00000645  BA 00000505 R     1		mov	edx,OFFSET ??0035
+ 0000064A  E8 00000000 E     1		call	WriteString
+ 0000064F  5A		     1		pop	edx
+ 00000650  A1 00000000 R	mov eax,user_score
+ 00000655  E8 00000000 E	call writedec
+				mwrite ", Computer= ",0
+			     1	;
+Main.asm(314) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(314): Main Line Code
+ 00000519		     1		.data		
+ 00000519 2C 20 43 6F 6D     1		??0036 BYTE ", Computer= ",0	
+	   70 75 74 65 72
+	   3D 20 00
+ 0000065A		     1		.code
+ 0000065A  52		     1		push	edx
+ 0000065B  BA 00000519 R     1		mov	edx,OFFSET ??0036
+ 00000660  E8 00000000 E     1		call	WriteString
+ 00000665  5A		     1		pop	edx
+ 00000666  A1 0000000C R	mov eax,computer_score
+ 0000066B  E8 00000000 E	call writedec
+ 00000670  E8 00000000 E	call crlf
+
+ 00000675  E8 00000000 E	call waitmsg
+ 0000067A  E8 00000000 E	call clrscr
+ 0000067F  E8 FFFFF97C		call display_game
+ 00000684  E9 FFFFFC32		jmp start
+
+
+				.elseif user_choose==3 && computer_choose==1
+ 00000689  E9 00000238	   *	    jmp    @C001C
+ 0000068E		   *@C0019:
+ 0000068E  83 3D 00000008 R
+	   03		   *	    cmp    user_choose, 003h
+ 00000695  0F 85 000000AA  *	    jne    @C001D
+ 0000069B  83 3D 00000004 R
+	   01		   *	    cmp    computer_choose, 001h
+ 000006A2  0F 85 0000009D  *	    jne    @C001D
+				mwrite"User Choose:",0
+			     1	;
+Main.asm(326) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(326): Main Line Code
+ 00000526		     1		.data		
+ 00000526 55 73 65 72 20     1		??0037 BYTE "User Choose:",0	
+	   43 68 6F 6F 73
+	   65 3A 00
+ 000006A8		     1		.code
+ 000006A8  52		     1		push	edx
+ 000006A9  BA 00000526 R     1		mov	edx,OFFSET ??0037
+ 000006AE  E8 00000000 E     1		call	WriteString
+ 000006B3  5A		     1		pop	edx
+ 000006B4  E8 00000000 E	call crlf
+ 000006B9  E8 FFFFF97B		call scissor
+ 000006BE  E8 00000000 E	call crlf
+				mwrite"Computer Choose:",0
+			     1	;
+Main.asm(330) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(330): Main Line Code
+ 00000533		     1		.data		
+ 00000533 43 6F 6D 70 75     1		??0038 BYTE "Computer Choose:",0	
+	   74 65 72 20 43
+	   68 6F 6F 73 65
+	   3A 00
+ 000006C3		     1		.code
+ 000006C3  52		     1		push	edx
+ 000006C4  BA 00000533 R     1		mov	edx,OFFSET ??0038
+ 000006C9  E8 00000000 E     1		call	WriteString
+ 000006CE  5A		     1		pop	edx
+ 000006CF  E8 00000000 E	call crlf
+ 000006D4  E8 FFFFF9CC		call rock
+ 000006D9  E8 00000000 E	call crlf
+				mwrite "Computer Win!",0
+			     1	;
+Main.asm(334) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(334): Main Line Code
+ 00000544		     1		.data		
+ 00000544 43 6F 6D 70 75     1		??0039 BYTE "Computer Win!",0	
+	   74 65 72 20 57
+	   69 6E 21 00
+ 000006DE		     1		.code
+ 000006DE  52		     1		push	edx
+ 000006DF  BA 00000544 R     1		mov	edx,OFFSET ??0039
+ 000006E4  E8 00000000 E     1		call	WriteString
+ 000006E9  5A		     1		pop	edx
+ 000006EA  FF 0D 00000010 R	dec check
+ 000006F0  E8 00000000 E	call crlf
+ 000006F5  FF 05 0000000C R	inc computer_score
+				mwrite "Score Board: User= ",0
+			     1	;
+Main.asm(338) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(338): Main Line Code
+ 00000552		     1		.data		
+ 00000552 53 63 6F 72 65     1		??003A BYTE "Score Board: User= ",0	
+	   20 42 6F 61 72
+	   64 3A 20 55 73
+	   65 72 3D 20 00
+ 000006FB		     1		.code
+ 000006FB  52		     1		push	edx
+ 000006FC  BA 00000552 R     1		mov	edx,OFFSET ??003A
+ 00000701  E8 00000000 E     1		call	WriteString
+ 00000706  5A		     1		pop	edx
+ 00000707  A1 00000000 R	mov eax,user_score
+ 0000070C  E8 00000000 E	call writedec
+				mwrite ", Computer= ",0
+			     1	;
+Main.asm(341) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(341): Main Line Code
+ 00000566		     1		.data		
+ 00000566 2C 20 43 6F 6D     1		??003B BYTE ", Computer= ",0	
+	   70 75 74 65 72
+	   3D 20 00
+ 00000711		     1		.code
+ 00000711  52		     1		push	edx
+ 00000712  BA 00000566 R     1		mov	edx,OFFSET ??003B
+ 00000717  E8 00000000 E     1		call	WriteString
+ 0000071C  5A		     1		pop	edx
+ 0000071D  A1 0000000C R	mov eax,computer_score
+ 00000722  E8 00000000 E	call writedec
+ 00000727  E8 00000000 E	call crlf
+
+ 0000072C  E8 00000000 E	call waitmsg
+ 00000731  E8 00000000 E	call clrscr
+ 00000736  E8 FFFFF8C5		call display_game
+ 0000073B  E9 FFFFFB7B		jmp start
+
+
+
+				.elseif user_choose==2 && computer_choose==3
+ 00000740  E9 00000181	   *	    jmp    @C0020
+ 00000745		   *@C001D:
+ 00000745  83 3D 00000008 R
+	   02		   *	    cmp    user_choose, 002h
+ 0000074C  0F 85 000000AA  *	    jne    @C0021
+ 00000752  83 3D 00000004 R
+	   03		   *	    cmp    computer_choose, 003h
+ 00000759  0F 85 0000009D  *	    jne    @C0021
+				mwrite"User Choose:",0
+			     1	;
+Main.asm(354) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(354): Main Line Code
+ 00000573		     1		.data		
+ 00000573 55 73 65 72 20     1		??003C BYTE "User Choose:",0	
+	   43 68 6F 6F 73
+	   65 3A 00
+ 0000075F		     1		.code
+ 0000075F  52		     1		push	edx
+ 00000760  BA 00000573 R     1		mov	edx,OFFSET ??003C
+ 00000765  E8 00000000 E     1		call	WriteString
+ 0000076A  5A		     1		pop	edx
+ 0000076B  E8 00000000 E	call crlf
+ 00000770  E8 FFFFF99C		call paper
+ 00000775  E8 00000000 E	call crlf
+				mwrite"Computer Choose:",0
+			     1	;
+Main.asm(358) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(358): Main Line Code
+ 00000580		     1		.data		
+ 00000580 43 6F 6D 70 75     1		??003D BYTE "Computer Choose:",0	
+	   74 65 72 20 43
+	   68 6F 6F 73 65
+	   3A 00
+ 0000077A		     1		.code
+ 0000077A  52		     1		push	edx
+ 0000077B  BA 00000580 R     1		mov	edx,OFFSET ??003D
+ 00000780  E8 00000000 E     1		call	WriteString
+ 00000785  5A		     1		pop	edx
+ 00000786  E8 00000000 E	call crlf
+ 0000078B  E8 FFFFF8A9		call scissor
+ 00000790  E8 00000000 E	call crlf
+				mwrite "Computer Win!",0
+			     1	;
+Main.asm(362) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(362): Main Line Code
+ 00000591		     1		.data		
+ 00000591 43 6F 6D 70 75     1		??003E BYTE "Computer Win!",0	
+	   74 65 72 20 57
+	   69 6E 21 00
+ 00000795		     1		.code
+ 00000795  52		     1		push	edx
+ 00000796  BA 00000591 R     1		mov	edx,OFFSET ??003E
+ 0000079B  E8 00000000 E     1		call	WriteString
+ 000007A0  5A		     1		pop	edx
+ 000007A1  FF 0D 00000010 R	dec check
+ 000007A7  E8 00000000 E	call crlf
+ 000007AC  FF 05 0000000C R	inc computer_score
+				mwrite "Score Board: User= ",0
+			     1	;
+Main.asm(366) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(366): Main Line Code
+ 0000059F		     1		.data		
+ 0000059F 53 63 6F 72 65     1		??003F BYTE "Score Board: User= ",0	
+	   20 42 6F 61 72
+	   64 3A 20 55 73
+	   65 72 3D 20 00
+ 000007B2		     1		.code
+ 000007B2  52		     1		push	edx
+ 000007B3  BA 0000059F R     1		mov	edx,OFFSET ??003F
+ 000007B8  E8 00000000 E     1		call	WriteString
+ 000007BD  5A		     1		pop	edx
+ 000007BE  A1 00000000 R	mov eax,user_score
+ 000007C3  E8 00000000 E	call writedec
+				mwrite ", Computer= ",0
+			     1	;
+Main.asm(369) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(369): Main Line Code
+ 000005B3		     1		.data		
+ 000005B3 2C 20 43 6F 6D     1		??0040 BYTE ", Computer= ",0	
+	   70 75 74 65 72
+	   3D 20 00
+ 000007C8		     1		.code
+ 000007C8  52		     1		push	edx
+ 000007C9  BA 000005B3 R     1		mov	edx,OFFSET ??0040
+ 000007CE  E8 00000000 E     1		call	WriteString
+ 000007D3  5A		     1		pop	edx
+ 000007D4  A1 0000000C R	mov eax,computer_score
+ 000007D9  E8 00000000 E	call writedec
+ 000007DE  E8 00000000 E	call crlf
+
+ 000007E3  E8 00000000 E	call waitmsg
+ 000007E8  E8 00000000 E	call clrscr
+ 000007ED  E8 FFFFF80E		call display_game
+ 000007F2  E9 FFFFFAC4		jmp start
+
+
+				.elseif user_choose==3 && computer_choose==2
+ 000007F7  E9 000000CA	   *	    jmp    @C0024
+ 000007FC		   *@C0021:
+ 000007FC  83 3D 00000008 R
+	   03		   *	    cmp    user_choose, 003h
+ 00000803  0F 85 000000A1  *	    jne    @C0025
+ 00000809  83 3D 00000004 R
+	   02		   *	    cmp    computer_choose, 002h
+ 00000810  0F 85 00000094  *	    jne    @C0025
+				mwrite"User Choose:",0
+			     1	;
+Main.asm(381) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(381): Main Line Code
+ 000005C0		     1		.data		
+ 000005C0 55 73 65 72 20     1		??0041 BYTE "User Choose:",0	
+	   43 68 6F 6F 73
+	   65 3A 00
+ 00000816		     1		.code
+ 00000816  52		     1		push	edx
+ 00000817  BA 000005C0 R     1		mov	edx,OFFSET ??0041
+ 0000081C  E8 00000000 E     1		call	WriteString
+ 00000821  5A		     1		pop	edx
+ 00000822  E8 00000000 E	call crlf
+ 00000827  E8 FFFFF80D		call scissor
+ 0000082C  E8 00000000 E	call crlf
+				mwrite"Computer Choose:",0
+			     1	;
+Main.asm(385) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(385): Main Line Code
+ 000005CD		     1		.data		
+ 000005CD 43 6F 6D 70 75     1		??0042 BYTE "Computer Choose:",0	
+	   74 65 72 20 43
+	   68 6F 6F 73 65
+	   3A 00
+ 00000831		     1		.code
+ 00000831  52		     1		push	edx
+ 00000832  BA 000005CD R     1		mov	edx,OFFSET ??0042
+ 00000837  E8 00000000 E     1		call	WriteString
+ 0000083C  5A		     1		pop	edx
+ 0000083D  E8 00000000 E	call crlf
+ 00000842  E8 FFFFF8CA		call paper
+ 00000847  E8 00000000 E	call crlf
+				mwrite "User Win!",0
+			     1	;
+Main.asm(389) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(389): Main Line Code
+ 000005DE		     1		.data		
+ 000005DE 55 73 65 72 20     1		??0043 BYTE "User Win!",0	
+	   57 69 6E 21 00
+ 0000084C		     1		.code
+ 0000084C  52		     1		push	edx
+ 0000084D  BA 000005DE R     1		mov	edx,OFFSET ??0043
+ 00000852  E8 00000000 E     1		call	WriteString
+ 00000857  5A		     1		pop	edx
+ 00000858  E8 00000000 E	call crlf
+ 0000085D  FF 05 00000000 R	inc user_score
+				mwrite "Score Board: User= ",0
+			     1	;
+Main.asm(392) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(392): Main Line Code
+ 000005E8		     1		.data		
+ 000005E8 53 63 6F 72 65     1		??0044 BYTE "Score Board: User= ",0	
+	   20 42 6F 61 72
+	   64 3A 20 55 73
+	   65 72 3D 20 00
+ 00000863		     1		.code
+ 00000863  52		     1		push	edx
+ 00000864  BA 000005E8 R     1		mov	edx,OFFSET ??0044
+ 00000869  E8 00000000 E     1		call	WriteString
+ 0000086E  5A		     1		pop	edx
+ 0000086F  A1 00000000 R	mov eax,user_score
+ 00000874  E8 00000000 E	call writedec
+				mwrite ", Computer= ",0
+			     1	;
+Main.asm(395) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(395): Main Line Code
+ 000005FC		     1		.data		
+ 000005FC 2C 20 43 6F 6D     1		??0045 BYTE ", Computer= ",0	
+	   70 75 74 65 72
+	   3D 20 00
+ 00000879		     1		.code
+ 00000879  52		     1		push	edx
+ 0000087A  BA 000005FC R     1		mov	edx,OFFSET ??0045
+ 0000087F  E8 00000000 E     1		call	WriteString
+ 00000884  5A		     1		pop	edx
+ 00000885  A1 0000000C R	mov eax,computer_score
+ 0000088A  E8 00000000 E	call writedec
+ 0000088F  E8 00000000 E	call crlf
+
+ 00000894  E8 00000000 E	call waitmsg
+ 00000899  E8 00000000 E	call clrscr
+ 0000089E  E8 FFFFF75D		call display_game
+ 000008A3  E9 FFFFFA13		jmp start
+
+
+				.else
+ 000008A8  EB 1C	   *	    jmp    @C0028
+ 000008AA		   *@C0025:
+				.if user_choose==4
+ 000008AA  83 3D 00000008 R
+	   04		   *	    cmp    user_choose, 004h
+ 000008B1  75 02	   *	    jne    @C0029
+ 000008B3  EB 28		jmp exit1
+				.endif
+				mwrite "Please Enter Valid Input: ",0
+			     1	;
+Main.asm(410) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(410): Main Line Code
+ 000008B5 00000609	     1		.data		
+ 00000609 50 6C 65 61 73     1		??0046 BYTE "Please Enter Valid Input: ",0	
+	   65 20 45 6E 74
+	   65 72 20 56 61
+	   6C 69 64 20 49
+	   6E 70 75 74 3A
+	   20 00
+ 000008B5		     1		.code
+ 000008B5  52		     1		push	edx
+ 000008B6  BA 00000609 R     1		mov	edx,OFFSET ??0046
+ 000008BB  E8 00000000 E     1		call	WriteString
+ 000008C0  5A		     1		pop	edx
+ 000008C1  E8 00000000 E	call crlf
+				.endif
+
+
+				.endw
+ 000008C6		   *@C0028:
+ 000008C6		   *@C0024:
+ 000008C6		   *@C0020:
+ 000008C6		   *@C001C:
+ 000008C6		   *@C0018:
+ 000008C6		   *@C0014:
+ 000008C6		   *@C0010:
+ 000008C6		   *@C000C:
+ 000008C6		   *@C0008:
+ 000008C6		   *@C0001:
+ 000008C6  83 3D 00000010 R
+	   01		   *	    cmp    check, 001h
+ 000008CD  0F 83 FFFFF9ED  *	    jae    @C0002
+
+ 000008D3  E8 00000000 E	call clrscr
+ 000008D8  E8 00000000 E	call crlf
+
+ 000008DD			exit1:
+				mwrite "User Total Score : ",0
+			     1	;
+Main.asm(421) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(421): Main Line Code
+ 00000624		     1		.data		
+ 00000624 55 73 65 72 20     1		??0047 BYTE "User Total Score : ",0	
+	   54 6F 74 61 6C
+	   20 53 63 6F 72
+	   65 20 3A 20 00
+ 000008DD		     1		.code
+ 000008DD  52		     1		push	edx
+ 000008DE  BA 00000624 R     1		mov	edx,OFFSET ??0047
+ 000008E3  E8 00000000 E     1		call	WriteString
+ 000008E8  5A		     1		pop	edx
+ 000008E9  A1 00000000 R	mov eax,user_score
+ 000008EE  E8 00000000 E	call writedec
+ 000008F3  E8 00000000 E	call crlf
+				mwrite "Computer Total Score :",0
+			     1	;
+Main.asm(425) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(425): Main Line Code
+ 00000638		     1		.data		
+ 00000638 43 6F 6D 70 75     1		??0048 BYTE "Computer Total Score :",0	
+	   74 65 72 20 54
+	   6F 74 61 6C 20
+	   53 63 6F 72 65
+	   20 3A 00
+ 000008F8		     1		.code
+ 000008F8  52		     1		push	edx
+ 000008F9  BA 00000638 R     1		mov	edx,OFFSET ??0048
+ 000008FE  E8 00000000 E     1		call	WriteString
+ 00000903  5A		     1		pop	edx
+ 00000904  A1 0000000C R	mov eax,computer_score
+ 00000909  E8 00000000 E	call writedec
+ 0000090E  E8 00000000 E	call crlf
+
+ 00000913  BE 00000097 R	mov esi,offset arr1
+ 00000918  8B 1D 00000000 R	mov ebx,user_score
+ 0000091E  83 C3 30		add ebx,48
+ 00000921  8B C3		mov eax,ebx
+ 00000923  89 06		mov [esi],eax
+ 00000925  BA 00000021 R	mov edx,offset u_file_2
+ 0000092A  E8 00000000 E	call createoutputfile
+ 0000092F  A3 00000033 R	mov u_file_h_2,eax
+ 00000934  BA 00000097 R	mov edx,offset arr1
+ 00000939  B9 00000002		mov ecx,2
+ 0000093E  A1 00000033 R	mov eax,u_file_h_2
+ 00000943  E8 00000000 E	call writetofile
+ 00000948  A1 00000033 R	mov eax,u_file_h_2
+ 0000094D  E8 00000000 E	call closefile
+
+
+ 00000952  A1 00000000 R	mov eax,user_score
+				.if eax>computer_score
+ 00000957  3B 05 0000000C R *	    cmp    eax, computer_score
+ 0000095D  76 0E	   *	    jbe    @C002C
+				mwrite "User Win!",0
+			     1	;
+Main.asm(448) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(448): Main Line Code
+ 0000064F		     1		.data		
+ 0000064F 55 73 65 72 20     1		??0049 BYTE "User Win!",0	
+	   57 69 6E 21 00
+ 0000095F		     1		.code
+ 0000095F  52		     1		push	edx
+ 00000960  BA 0000064F R     1		mov	edx,OFFSET ??0049
+ 00000965  E8 00000000 E     1		call	WriteString
+ 0000096A  5A		     1		pop	edx
+				.elseif computer_score>eax
+ 0000096B  EB 22	   *	    jmp    @C002E
+ 0000096D		   *@C002C:
+ 0000096D  39 05 0000000C R *	    cmp    computer_score, eax
+ 00000973  76 0E	   *	    jbe    @C002F
+				mwrite "Computer Win!",0
+			     1	;
+Main.asm(450) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(450): Main Line Code
+ 00000659		     1		.data		
+ 00000659 43 6F 6D 70 75     1		??004A BYTE "Computer Win!",0	
+	   74 65 72 20 57
+	   69 6E 21 00
+ 00000975		     1		.code
+ 00000975  52		     1		push	edx
+ 00000976  BA 00000659 R     1		mov	edx,OFFSET ??004A
+ 0000097B  E8 00000000 E     1		call	WriteString
+ 00000980  5A		     1		pop	edx
+				.else
+ 00000981  EB 0C	   *	    jmp    @C0031
+ 00000983		   *@C002F:
+				mwrite "Match Tie",0
+			     1	;
+Main.asm(452) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(452): Main Line Code
+ 00000667		     1		.data		
+ 00000667 4D 61 74 63 68     1		??004B BYTE "Match Tie",0	
+	   20 54 69 65 00
+ 00000983		     1		.code
+ 00000983  52		     1		push	edx
+ 00000984  BA 00000667 R     1		mov	edx,OFFSET ??004B
+ 00000989  E8 00000000 E     1		call	WriteString
+ 0000098E  5A		     1		pop	edx
+				.endif
+ 0000098F		   *@C0031:
+ 0000098F		   *@C002E:
+ 0000098F  E8 00000000 E	call crlf
+ 00000994  E8 00000000 E	call waitmsg
+ 00000999  C3			ret
+ 0000099A			game_start endp
+
+									;MAIN FUNCTION
+ 0000099A			main proc
+ 0000099A			l:
+ 0000099A  E8 FFFFF661		call display_game   ;logo
+				;call rules
+
+				mwrite "		M A N E  M E N U ",0
+			     1	;
+Main.asm(465) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(465): Main Line Code
+ 00000671		     1		.data		
+ 00000671 09 09 4D 20 41     1		??004C BYTE "		M A N E  M E N U ",0	
+	   20 4E 20 45 20
+	   20 4D 20 45 20
+	   4E 20 55 20 00
+ 0000099F		     1		.code
+ 0000099F  52		     1		push	edx
+ 000009A0  BA 00000671 R     1		mov	edx,OFFSET ??004C
+ 000009A5  E8 00000000 E     1		call	WriteString
+ 000009AA  5A		     1		pop	edx
+ 000009AB  E8 00000000 E	call crlf
+				mwrite "1- Play Game: ",0
+			     1	;
+Main.asm(467) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(467): Main Line Code
+ 00000685		     1		.data		
+ 00000685 31 2D 20 50 6C     1		??004D BYTE "1- Play Game: ",0	
+	   61 79 20 47 61
+	   6D 65 3A 20 00
+ 000009B0		     1		.code
+ 000009B0  52		     1		push	edx
+ 000009B1  BA 00000685 R     1		mov	edx,OFFSET ??004D
+ 000009B6  E8 00000000 E     1		call	WriteString
+ 000009BB  5A		     1		pop	edx
+ 000009BC  E8 00000000 E	call crlf
+				mwrite "2- Show Game Rules: ",0
+			     1	;
+Main.asm(469) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(469): Main Line Code
+ 00000694		     1		.data		
+ 00000694 32 2D 20 53 68     1		??004E BYTE "2- Show Game Rules: ",0	
+	   6F 77 20 47 61
+	   6D 65 20 52 75
+	   6C 65 73 3A 20
+	   00
+ 000009C1		     1		.code
+ 000009C1  52		     1		push	edx
+ 000009C2  BA 00000694 R     1		mov	edx,OFFSET ??004E
+ 000009C7  E8 00000000 E     1		call	WriteString
+ 000009CC  5A		     1		pop	edx
+ 000009CD  E8 00000000 E	call crlf
+				mwrite "3- Show User Previous Score: ",0
+			     1	;
+Main.asm(471) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(471): Main Line Code
+ 000006A9		     1		.data		
+ 000006A9 33 2D 20 53 68     1		??004F BYTE "3- Show User Previous Score: ",0	
+	   6F 77 20 55 73
+	   65 72 20 50 72
+	   65 76 69 6F 75
+	   73 20 53 63 6F
+	   72 65 3A 20 00
+ 000009D2		     1		.code
+ 000009D2  52		     1		push	edx
+ 000009D3  BA 000006A9 R     1		mov	edx,OFFSET ??004F
+ 000009D8  E8 00000000 E     1		call	WriteString
+ 000009DD  5A		     1		pop	edx
+ 000009DE  E8 00000000 E	call crlf
+				mwrite "4- Exit Main Menu: ",0
+			     1	;
+Main.asm(473) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(473): Main Line Code
+ 000006C7		     1		.data		
+ 000006C7 34 2D 20 45 78     1		??0050 BYTE "4- Exit Main Menu: ",0	
+	   69 74 20 4D 61
+	   69 6E 20 4D 65
+	   6E 75 3A 20 00
+ 000009E3		     1		.code
+ 000009E3  52		     1		push	edx
+ 000009E4  BA 000006C7 R     1		mov	edx,OFFSET ??0050
+ 000009E9  E8 00000000 E     1		call	WriteString
+ 000009EE  5A		     1		pop	edx
+ 000009EF  E8 00000000 E	call crlf
+				mwrite "-> ",0
+			     1	;
+Main.asm(475) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(475): Main Line Code
+ 000006DB		     1		.data		
+ 000006DB 2D 3E 20 00	     1		??0051 BYTE "-> ",0	
+ 000009F4		     1		.code
+ 000009F4  52		     1		push	edx
+ 000009F5  BA 000006DB R     1		mov	edx,OFFSET ??0051
+ 000009FA  E8 00000000 E     1		call	WriteString
+ 000009FF  5A		     1		pop	edx
+ 00000A00  E8 00000000 E	call readdec
+				.if eax==1
+ 00000A05  83 F8 01	   *	    cmp    eax, 001h
+ 00000A08  75 69	   *	    jne    @C0032
+ 00000A0A  E8 00000000 E	call clrscr
+				mwrite "Enter User Name: ",0
+			     1	;
+Main.asm(479) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(479): Main Line Code
+ 000006DF		     1		.data		
+ 000006DF 45 6E 74 65 72     1		??0052 BYTE "Enter User Name: ",0	
+	   20 55 73 65 72
+	   20 4E 61 6D 65
+	   3A 20 00
+ 00000A0F		     1		.code
+ 00000A0F  52		     1		push	edx
+ 00000A10  BA 000006DF R     1		mov	edx,OFFSET ??0052
+ 00000A15  E8 00000000 E     1		call	WriteString
+ 00000A1A  5A		     1		pop	edx
+ 00000A1B  BA 00000037 R	mov edx,offset user_name
+ 00000A20  B9 00000014		mov ecx,max
+ 00000A25  E8 00000000 E	call readstring
+ 00000A2A  A3 00000093 R	mov u_name,eax
+ 00000A2F  BA 00000014 R	mov edx,offset u_file_1
+ 00000A34  E8 00000000 E	call createoutputfile
+ 00000A39  A3 0000002F R	mov u_file_h_1,eax
+ 00000A3E  BA 00000037 R	mov edx,offset user_name
+ 00000A43  8B 0D 00000093 R	mov ecx,u_name
+ 00000A49  A1 0000002F R	mov eax,u_file_h_1
+
+ 00000A4E  E8 00000000 E	call writetofile
+ 00000A53  A1 0000002F R	mov eax,u_file_h_1
+ 00000A58  E8 00000000 E	call closefile
+ 00000A5D  E8 FFFFF59E		call display_game   ;logo
+ 00000A62  E8 FFFFF836		call game_start
+ 00000A67  E8 00000000 E	call clrscr
+ 00000A6C  E9 FFFFFF29		jmp l
+				.elseif eax==2
+ 00000A71  EB 64	   *	    jmp    @C0034
+ 00000A73		   *@C0032:
+ 00000A73  83 F8 02	   *	    cmp    eax, 002h
+ 00000A76  75 1B	   *	    jne    @C0035
+ 00000A78  E8 00000000 E	call clrscr
+ 00000A7D  E8 FFFFF6FB		call rules
+ 00000A82  E8 00000000 E	call waitmsg
+ 00000A87  E8 00000000 E	call clrscr
+ 00000A8C  E9 FFFFFF09		jmp l
+				.elseif eax==3
+ 00000A91  EB 44	   *	    jmp    @C0037
+ 00000A93		   *@C0035:
+ 00000A93  83 F8 03	   *	    cmp    eax, 003h
+ 00000A96  75 11	   *	    jne    @C0038
+ 00000A98  E8 FFFFF760		call highest_score
+ 00000A9D  E8 00000000 E	call clrscr
+ 00000AA2  E9 FFFFFEF3		jmp l
+				.elseif eax==4
+ 00000AA7  EB 2E	   *	    jmp    @C003A
+ 00000AA9		   *@C0038:
+ 00000AA9  83 F8 04	   *	    cmp    eax, 004h
+ 00000AAC  75 09	   *	    jne    @C003B
+ 00000AAE  E8 00000000 E	call crlf
+ 00000AB3  EB 22		jmp next
+				.else
+ 00000AB5  EB 20	   *	    jmp    @C003D
+ 00000AB7		   *@C003B:
+ 00000AB7  E8 00000000 E	call crlf
+				mwrite "Invalid Input",0
+			     1	;
+Main.asm(513) : warning A4006:too many arguments in macro call
+ mWrite(1): Macro Called From
+  Main.asm(513): Main Line Code
+ 000006F1		     1		.data		
+ 000006F1 49 6E 76 61 6C     1		??0053 BYTE "Invalid Input",0	
+	   69 64 20 49 6E
+	   70 75 74 00
+ 00000ABC		     1		.code
+ 00000ABC  52		     1		push	edx
+ 00000ABD  BA 000006F1 R     1		mov	edx,OFFSET ??0053
+ 00000AC2  E8 00000000 E     1		call	WriteString
+ 00000AC7  5A		     1		pop	edx
+ 00000AC8  E8 00000000 E	call crlf
+ 00000ACD  E8 00000000 E	call waitmsg
+
+ 00000AD2  E9 FFFFFEC3		jmp l
+				.endif
+ 00000AD7		   *@C003D:
+ 00000AD7		   *@C003A:
+ 00000AD7		   *@C0037:
+ 00000AD7		   *@C0034:
+
+ 00000AD7			next:
+ 00000AD7  E8 00000000 E	call clrscr
+				exit
+ 00000ADC  6A 00	   *	    push   +000000000h
+ 00000ADE  E8 00000000 E   *	    call   ExitProcess
+ 00000AE3			main endp
+				end main
+Microsoft (R) Macro Assembler Version 14.37.32824.0	    01/27/24 01:14:55
+Main.asm						     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+IsDefined  . . . . . . . . . . .	Func
+Startup  . . . . . . . . . . . .	Proc
+mDumpMem . . . . . . . . . . . .	Proc
+mDump  . . . . . . . . . . . . .	Proc
+mGotoxy  . . . . . . . . . . . .	Proc
+mReadString  . . . . . . . . . .	Proc
+mShowRegister  . . . . . . . . .	Proc
+mShow  . . . . . . . . . . . . .	Proc
+mWriteLn . . . . . . . . . . . .	Proc
+mWriteSpace  . . . . . . . . . .	Proc
+mWriteString . . . . . . . . . .	Proc
+mWrite . . . . . . . . . . . . .	Proc
+
+
+Structures and Unions:
+
+                N a m e                  Size
+                                         Offset      Type
+
+CONSOLE_CURSOR_INFO  . . . . . .	 00000008
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+  bVisible . . . . . . . . . . .	 00000004	 DWord
+CONSOLE_SCREEN_BUFFER_INFO . . .	 00000016
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+  dwCursorPosition . . . . . . .	 00000004	 DWord
+  wAttributes  . . . . . . . . .	 00000008	 Word
+  srWindow . . . . . . . . . . .	 0000000A	 QWord
+  dwMaximumWindowSize  . . . . .	 00000012	 DWord
+COORD  . . . . . . . . . . . . .	 00000004
+  X  . . . . . . . . . . . . . .	 00000000	 Word
+  Y  . . . . . . . . . . . . . .	 00000002	 Word
+FILETIME . . . . . . . . . . . .	 00000008
+  loDateTime . . . . . . . . . .	 00000000	 DWord
+  hiDateTime . . . . . . . . . .	 00000004	 DWord
+FOCUS_EVENT_RECORD . . . . . . .	 00000004
+  bSetFocus  . . . . . . . . . .	 00000000	 DWord
+FPU_ENVIRON  . . . . . . . . . .	 0000001C
+  controlWord  . . . . . . . . .	 00000000	 Word
+  statusWord . . . . . . . . . .	 00000004	 Word
+  tagWord  . . . . . . . . . . .	 00000008	 Word
+  instrPointerOffset . . . . . .	 0000000C	 DWord
+  instrPointerSelector . . . . .	 00000010	 DWord
+  operandPointerOffset . . . . .	 00000014	 DWord
+  operandPointerSelector . . . .	 00000018	 Word
+INPUT_RECORD . . . . . . . . . .	 00000014
+  EventType  . . . . . . . . . .	 00000000	 Word
+  Event  . . . . . . . . . . . .	 00000004	 XmmWord
+  bKeyDown . . . . . . . . . . .	 00000000	 DWord
+  wRepeatCount . . . . . . . . .	 00000004	 Word
+  wVirtualKeyCode  . . . . . . .	 00000006	 Word
+  wVirtualScanCode . . . . . . .	 00000008	 Word
+  uChar  . . . . . . . . . . . .	 0000000A	 Word
+  UnicodeChar  . . . . . . . . .	 00000000	 Word
+  AsciiChar  . . . . . . . . . .	 00000000	 Byte
+  dwControlKeyState  . . . . . .	 0000000C	 DWord
+  dwMousePosition  . . . . . . .	 00000000	 DWord
+  dwButtonState  . . . . . . . .	 00000004	 DWord
+  dwMouseControlKeyState . . . .	 00000008	 DWord
+  dwEventFlags . . . . . . . . .	 0000000C	 DWord
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+  dwCommandId  . . . . . . . . .	 00000000	 DWord
+  bSetFocus  . . . . . . . . . .	 00000000	 DWord
+KEY_EVENT_RECORD . . . . . . . .	 00000010
+  bKeyDown . . . . . . . . . . .	 00000000	 DWord
+  wRepeatCount . . . . . . . . .	 00000004	 Word
+  wVirtualKeyCode  . . . . . . .	 00000006	 Word
+  wVirtualScanCode . . . . . . .	 00000008	 Word
+  uChar  . . . . . . . . . . . .	 0000000A	 Word
+  UnicodeChar  . . . . . . . . .	 00000000	 Word
+  AsciiChar  . . . . . . . . . .	 00000000	 Byte
+  dwControlKeyState  . . . . . .	 0000000C	 DWord
+MENU_EVENT_RECORD  . . . . . . .	 00000004
+  dwCommandId  . . . . . . . . .	 00000000	 DWord
+MOUSE_EVENT_RECORD . . . . . . .	 00000010
+  dwMousePosition  . . . . . . .	 00000000	 DWord
+  dwButtonState  . . . . . . . .	 00000004	 DWord
+  dwMouseControlKeyState . . . .	 00000008	 DWord
+  dwEventFlags . . . . . . . . .	 0000000C	 DWord
+SMALL_RECT . . . . . . . . . . .	 00000008
+  Left . . . . . . . . . . . . .	 00000000	 Word
+  Top  . . . . . . . . . . . . .	 00000002	 Word
+  Right  . . . . . . . . . . . .	 00000004	 Word
+  Bottom . . . . . . . . . . . .	 00000006	 Word
+SYSTEMTIME . . . . . . . . . . .	 00000010
+  wYear  . . . . . . . . . . . .	 00000000	 Word
+  wMonth . . . . . . . . . . . .	 00000002	 Word
+  wDayOfWeek . . . . . . . . . .	 00000004	 Word
+  wDay . . . . . . . . . . . . .	 00000006	 Word
+  wHour  . . . . . . . . . . . .	 00000008	 Word
+  wMinute  . . . . . . . . . . .	 0000000A	 Word
+  wSecond  . . . . . . . . . . .	 0000000C	 Word
+  wMilliseconds  . . . . . . . .	 0000000E	 Word
+WINDOW_BUFFER_SIZE_RECORD  . . .	 00000004
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
+_DATA  . . . . . . . . . . . . .	32 Bit	 000006FF Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000AE3 Para	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetCommandTail . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleCP . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleScreenBufferInfo . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetDateTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetFileTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetKeyState  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetLastError . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetMaxXY . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetMseconds  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetNumberOfConsoleInputEvents  .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetProcessHeap . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetStdHandle . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetSystemTime  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetTickCount . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Gotoxy . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapAlloc  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapDestroy  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapFree . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapSize . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+IsDigit  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+LocalFree  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadChar . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadConsoleA . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadDec  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadFile . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadFloat  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadFromFile . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadHex  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadInt  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadKeyFlush . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadKey  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadString . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleCursorPosition . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleScreenBufferSize . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleTextAttribute  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleTitleA . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleWindowInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetFilePointer . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ShowFPUStack . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Sleep  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+StrLength  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_compare  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_copy . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteBin . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteChar  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteConsoleA  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteConsoleOutputAttribute  . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteConsoleOutputCharacterA . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteDec . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteFloat . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteHexB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteStackFrameName  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+computer . . . . . . . . . . . .	P Near	 000001EC _TEXT	Length= 00000011 Public STDCALL
+display_game . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000039 Public STDCALL
+game_start . . . . . . . . . . .	P Near	 0000029D _TEXT	Length= 000006FD Public STDCALL
+  start  . . . . . . . . . . . .	L Near	 000002BB _TEXT	
+  exit1  . . . . . . . . . . . .	L Near	 000008DD _TEXT	
+highest_score  . . . . . . . . .	P Near	 000001FD _TEXT	Length= 000000A0 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 0000099A _TEXT	Length= 00000149 Public STDCALL
+  l  . . . . . . . . . . . . . .	L Near	 0000099A _TEXT	
+  next . . . . . . . . . . . . .	L Near	 00000AD7 _TEXT	
+paper  . . . . . . . . . . . . .	P Near	 00000111 _TEXT	Length= 0000006C Public STDCALL
+printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+rock . . . . . . . . . . . . . .	P Near	 000000A5 _TEXT	Length= 0000006C Public STDCALL
+rules  . . . . . . . . . . . . .	P Near	 0000017D _TEXT	Length= 0000006F Public STDCALL
+scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+scissor  . . . . . . . . . . . .	P Near	 00000039 _TEXT	Length= 0000006C Public STDCALL
+wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+??0000 . . . . . . . . . . . . .	Byte	 000000AB _DATA	
+??0001 . . . . . . . . . . . . .	Byte	 000000E2 _DATA	
+??0002 . . . . . . . . . . . . .	Byte	 00000119 _DATA	
+??0003 . . . . . . . . . . . . .	Byte	 00000152 _DATA	
+??0004 . . . . . . . . . . . . .	Byte	 0000015E _DATA	
+??0005 . . . . . . . . . . . . .	Byte	 0000016F _DATA	
+??0006 . . . . . . . . . . . . .	Byte	 00000181 _DATA	
+??0007 . . . . . . . . . . . . .	Byte	 0000019C _DATA	
+??0008 . . . . . . . . . . . . .	Byte	 000001A9 _DATA	
+??0009 . . . . . . . . . . . . .	Byte	 000001B5 _DATA	
+??000A . . . . . . . . . . . . .	Byte	 000001C2 _DATA	
+??000B . . . . . . . . . . . . .	Byte	 000001D0 _DATA	
+??000C . . . . . . . . . . . . .	Byte	 000001DE _DATA	
+??000D . . . . . . . . . . . . .	Byte	 000001F2 _DATA	
+??000E . . . . . . . . . . . . .	Byte	 000001FF _DATA	
+??000F . . . . . . . . . . . . .	Byte	 0000020B _DATA	
+??0010 . . . . . . . . . . . . .	Byte	 00000218 _DATA	
+??0011 . . . . . . . . . . . . .	Byte	 0000022A _DATA	
+??0012 . . . . . . . . . . . . .	Byte	 0000023D _DATA	
+??0013 . . . . . . . . . . . . .	Byte	 00000256 _DATA	
+??0014 . . . . . . . . . . . . .	Byte	 00000268 _DATA	
+??0015 . . . . . . . . . . . . .	Byte	 00000278 _DATA	
+??0016 . . . . . . . . . . . . .	Byte	 0000029A _DATA	
+??0017 . . . . . . . . . . . . .	Byte	 000002BC _DATA	
+??0018 . . . . . . . . . . . . .	Byte	 000002DE _DATA	
+??0019 . . . . . . . . . . . . .	Byte	 00000300 _DATA	
+??001A . . . . . . . . . . . . .	Byte	 00000322 _DATA	
+??001B . . . . . . . . . . . . .	Byte	 0000032E _DATA	
+??001C . . . . . . . . . . . . .	Byte	 00000344 _DATA	
+??001D . . . . . . . . . . . . .	Byte	 0000038C _DATA	
+??001E . . . . . . . . . . . . .	Byte	 0000039A _DATA	
+??001F . . . . . . . . . . . . .	Byte	 000003CF _DATA	
+??0020 . . . . . . . . . . . . .	Byte	 000003DC _DATA	
+??0021 . . . . . . . . . . . . .	Byte	 000003ED _DATA	
+??0022 . . . . . . . . . . . . .	Byte	 000003F7 _DATA	
+??0023 . . . . . . . . . . . . .	Byte	 00000404 _DATA	
+??0024 . . . . . . . . . . . . .	Byte	 00000415 _DATA	
+??0025 . . . . . . . . . . . . .	Byte	 0000041F _DATA	
+??0026 . . . . . . . . . . . . .	Byte	 0000042C _DATA	
+??0027 . . . . . . . . . . . . .	Byte	 0000043D _DATA	
+??0028 . . . . . . . . . . . . .	Byte	 00000447 _DATA	
+??0029 . . . . . . . . . . . . .	Byte	 00000454 _DATA	
+??002A . . . . . . . . . . . . .	Byte	 00000465 _DATA	
+??002B . . . . . . . . . . . . .	Byte	 00000473 _DATA	
+??002C . . . . . . . . . . . . .	Byte	 00000487 _DATA	
+??002D . . . . . . . . . . . . .	Byte	 00000494 _DATA	
+??002E . . . . . . . . . . . . .	Byte	 000004A1 _DATA	
+??002F . . . . . . . . . . . . .	Byte	 000004B2 _DATA	
+??0030 . . . . . . . . . . . . .	Byte	 000004BC _DATA	
+??0031 . . . . . . . . . . . . .	Byte	 000004D0 _DATA	
+??0032 . . . . . . . . . . . . .	Byte	 000004DD _DATA	
+??0033 . . . . . . . . . . . . .	Byte	 000004EA _DATA	
+??0034 . . . . . . . . . . . . .	Byte	 000004FB _DATA	
+??0035 . . . . . . . . . . . . .	Byte	 00000505 _DATA	
+??0036 . . . . . . . . . . . . .	Byte	 00000519 _DATA	
+??0037 . . . . . . . . . . . . .	Byte	 00000526 _DATA	
+??0038 . . . . . . . . . . . . .	Byte	 00000533 _DATA	
+??0039 . . . . . . . . . . . . .	Byte	 00000544 _DATA	
+??003A . . . . . . . . . . . . .	Byte	 00000552 _DATA	
+??003B . . . . . . . . . . . . .	Byte	 00000566 _DATA	
+??003C . . . . . . . . . . . . .	Byte	 00000573 _DATA	
+??003D . . . . . . . . . . . . .	Byte	 00000580 _DATA	
+??003E . . . . . . . . . . . . .	Byte	 00000591 _DATA	
+??003F . . . . . . . . . . . . .	Byte	 0000059F _DATA	
+??0040 . . . . . . . . . . . . .	Byte	 000005B3 _DATA	
+??0041 . . . . . . . . . . . . .	Byte	 000005C0 _DATA	
+??0042 . . . . . . . . . . . . .	Byte	 000005CD _DATA	
+??0043 . . . . . . . . . . . . .	Byte	 000005DE _DATA	
+??0044 . . . . . . . . . . . . .	Byte	 000005E8 _DATA	
+??0045 . . . . . . . . . . . . .	Byte	 000005FC _DATA	
+??0046 . . . . . . . . . . . . .	Byte	 00000609 _DATA	
+??0047 . . . . . . . . . . . . .	Byte	 00000624 _DATA	
+??0048 . . . . . . . . . . . . .	Byte	 00000638 _DATA	
+??0049 . . . . . . . . . . . . .	Byte	 0000064F _DATA	
+??004A . . . . . . . . . . . . .	Byte	 00000659 _DATA	
+??004B . . . . . . . . . . . . .	Byte	 00000667 _DATA	
+??004C . . . . . . . . . . . . .	Byte	 00000671 _DATA	
+??004D . . . . . . . . . . . . .	Byte	 00000685 _DATA	
+??004E . . . . . . . . . . . . .	Byte	 00000694 _DATA	
+??004F . . . . . . . . . . . . .	Byte	 000006A9 _DATA	
+??0050 . . . . . . . . . . . . .	Byte	 000006C7 _DATA	
+??0051 . . . . . . . . . . . . .	Byte	 000006DB _DATA	
+??0052 . . . . . . . . . . . . .	Byte	 000006DF _DATA	
+??0053 . . . . . . . . . . . . .	Byte	 000006F1 _DATA	
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000003h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+ALT_MASK . . . . . . . . . . . .	Number	 00000003h   
+CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h   
+CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
+CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
+CTRL_MASK  . . . . . . . . . . .	Number	 0000000Ch   
+CreateFile . . . . . . . . . . .	Text   	 CreateFileA
+DO_NOT_SHARE . . . . . . . . . .	Number	 00000000h   
+ENABLE_ECHO_INPUT  . . . . . . .	Number	 00000004h   
+ENABLE_LINE_INPUT  . . . . . . .	Number	 00000002h   
+ENABLE_MOUSE_INPUT . . . . . . .	Number	 00000010h   
+ENABLE_PROCESSED_INPUT . . . . .	Number	 00000001h   
+ENABLE_PROCESSED_OUTPUT  . . . .	Number	 00000001h   
+ENABLE_WINDOW_INPUT  . . . . . .	Number	 00000008h   
+ENABLE_WRAP_AT_EOL_OUTPUT  . . .	Number	 00000002h   
+ENHANCED_KEY . . . . . . . . . .	Number	 00000100h   
+FALSE  . . . . . . . . . . . . .	Number	 00000000h   
+FILE_APPEND_DATA . . . . . . . .	Number	 00000004h   
+FILE_ATTRIBUTE_ARCHIVE . . . . .	Number	 00000020h   
+FILE_ATTRIBUTE_COMPRESSED  . . .	Number	 00000800h   
+FILE_ATTRIBUTE_DEVICE  . . . . .	Number	 00000040h   
+FILE_ATTRIBUTE_DIRECTORY . . . .	Number	 00000010h   
+FILE_ATTRIBUTE_ENCRYPTED . . . .	Number	 00004000h   
+FILE_ATTRIBUTE_HIDDEN  . . . . .	Number	 00000002h   
+FILE_ATTRIBUTE_NORMAL  . . . . .	Number	 00000080h   
+FILE_ATTRIBUTE_NOT_CONTENT_INDEXED .	Number	 00002000h   
+FILE_ATTRIBUTE_OFFLINE . . . . .	Number	 00001000h   
+FILE_ATTRIBUTE_READONLY  . . . .	Number	 00000001h   
+FILE_ATTRIBUTE_REPARSE_POINT . .	Number	 00000400h   
+FILE_ATTRIBUTE_SPARSE_FILE . . .	Number	 00000200h   
+FILE_ATTRIBUTE_SYSTEM  . . . . .	Number	 00000004h   
+FILE_ATTRIBUTE_TEMPORARY . . . .	Number	 00000100h   
+FILE_BEGIN . . . . . . . . . . .	Number	 00000000h   
+FILE_CURRENT . . . . . . . . . .	Number	 00000001h   
+FILE_DELETE_CHILD  . . . . . . .	Number	 00000040h   
+FILE_END . . . . . . . . . . . .	Number	 00000002h   
+FILE_READ_DATA . . . . . . . . .	Number	 00000001h   
+FILE_SHARE_DELETE  . . . . . . .	Number	 00000004h   
+FILE_SHARE_READ  . . . . . . . .	Number	 00000001h   
+FILE_SHARE_WRITE . . . . . . . .	Number	 00000002h   
+FILE_WRITE_DATA  . . . . . . . .	Number	 00000002h   
+FOCUS_EVENT  . . . . . . . . . .	Number	 00000010h   
+FORMAT_MESSAGE_ALLOCATE_BUFFER .	Number	 00000100h   
+FORMAT_MESSAGE_FROM_SYSTEM . . .	Number	 00001000h   
+FormatMessage  . . . . . . . . .	Text   	 FormatMessageA
+GENERIC_ALL  . . . . . . . . . .	Number	 10000000h   
+GENERIC_EXECUTE  . . . . . . . .	Number	 20000000h   
+GENERIC_READ . . . . . . . . . .	Number	 -80000000h   
+GENERIC_WRITE  . . . . . . . . .	Number	 40000000h   
+GetCommandLine . . . . . . . . .	Text   	 GetCommandLineA
+HANDLE . . . . . . . . . . . . .	Text   	 DWORD
+HEAP_GENERATE_EXCEPTIONS . . . .	Number	 00000004h   
+HEAP_GROWABLE  . . . . . . . . .	Number	 00000002h   
+HEAP_NO_SERIALIZE  . . . . . . .	Number	 00000001h   
+HEAP_REALLOC_IN_PLACE_ONLY . . .	Number	 00000010h   
+HEAP_ZERO_MEMORY . . . . . . . .	Number	 00000008h   
+IDABORT  . . . . . . . . . . . .	Number	 00000003h   
+IDCANCEL . . . . . . . . . . . .	Number	 00000002h   
+IDCLOSE  . . . . . . . . . . . .	Number	 00000008h   
+IDCONTINUE . . . . . . . . . . .	Number	 0000000Bh   
+IDHELP . . . . . . . . . . . . .	Number	 00000009h   
+IDIGNORE . . . . . . . . . . . .	Number	 00000005h   
+IDNO . . . . . . . . . . . . . .	Number	 00000007h   
+IDOK . . . . . . . . . . . . . .	Number	 00000001h   
+IDRETRY  . . . . . . . . . . . .	Number	 00000004h   
+IDTIMEOUT  . . . . . . . . . . .	Number	 00007D00h   
+IDTRYAGAIN . . . . . . . . . . .	Number	 0000000Ah   
+IDYES  . . . . . . . . . . . . .	Number	 00000006h   
+INVALID_HANDLE_VALUE . . . . . .	Number	 -00000001h   
+KBDOWN_FLAG  . . . . . . . . . .	Number	 00000001h   
+KEY_EVENT  . . . . . . . . . . .	Number	 00000001h   
+KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
+LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
+LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
+MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
+MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
+MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
+MB_DEFBUTTON1  . . . . . . . . .	Number	 00000000h   
+MB_DEFBUTTON2  . . . . . . . . .	Number	 00000100h   
+MB_DEFBUTTON3  . . . . . . . . .	Number	 00000200h   
+MB_DEFBUTTON4  . . . . . . . . .	Number	 00000300h   
+MB_HELP  . . . . . . . . . . . .	Number	 00004000h   
+MB_ICONASTERISK  . . . . . . . .	Number	 00000040h   
+MB_ICONERROR . . . . . . . . . .	Number	 00000010h   
+MB_ICONEXCLAMATION . . . . . . .	Number	 00000030h   
+MB_ICONHAND  . . . . . . . . . .	Number	 00000010h   
+MB_ICONINFORMATION . . . . . . .	Number	 00000040h   
+MB_ICONQUESTION  . . . . . . . .	Number	 00000020h   
+MB_ICONSTOP  . . . . . . . . . .	Number	 00000010h   
+MB_ICONWARNING . . . . . . . . .	Number	 00000030h   
+MB_OKCANCEL  . . . . . . . . . .	Number	 00000001h   
+MB_OK  . . . . . . . . . . . . .	Number	 00000000h   
+MB_RETRYCANCEL . . . . . . . . .	Number	 00000005h   
+MB_SYSTEMMODAL . . . . . . . . .	Number	 00001000h   
+MB_TASKMODAL . . . . . . . . . .	Number	 00002000h   
+MB_USERICON  . . . . . . . . . .	Number	 00000080h   
+MB_YESNOCANCEL . . . . . . . . .	Number	 00000003h   
+MB_YESNO . . . . . . . . . . . .	Number	 00000004h   
+MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
+MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
+MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
+NULL . . . . . . . . . . . . . .	Number	 00000000h   
+NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
+OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
+OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
+PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
+RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
+RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
+ReadConsoleInput . . . . . . . .	Text   	 ReadConsoleInputA
+ReadConsole  . . . . . . . . . .	Text   	 ReadConsoleA
+SCROLLLOCK_ON  . . . . . . . . .	Number	 00000040h   
+SHIFT_MASK . . . . . . . . . . .	Number	 00000010h   
+SHIFT_PRESSED  . . . . . . . . .	Number	 00000010h   
+STD_ERROR_HANDLE . . . . . . . .	Number	 -0000000Ch   
+STD_INPUT_HANDLE . . . . . . . .	Number	 -0000000Ah   
+STD_OUTPUT_HANDLE  . . . . . . .	Number	 -0000000Bh   
+SetConsoleTitle  . . . . . . . .	Text   	 SetConsoleTitleA
+TAB  . . . . . . . . . . . . . .	Number	 00000009h   
+TRUE . . . . . . . . . . . . . .	Number	 00000001h   
+TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h   
+VK_11  . . . . . . . . . . . . .	Number	 000000BDh   
+VK_12  . . . . . . . . . . . . .	Number	 000000BBh   
+VK_ADD . . . . . . . . . . . . .	Number	 0000006Bh   
+VK_BACK  . . . . . . . . . . . .	Number	 00000008h   
+VK_CANCEL  . . . . . . . . . . .	Number	 00000003h   
+VK_CAPITAL . . . . . . . . . . .	Number	 00000014h   
+VK_CLEAR . . . . . . . . . . . .	Number	 0000000Ch   
+VK_CONTROL . . . . . . . . . . .	Number	 00000011h   
+VK_DECIMAL . . . . . . . . . . .	Number	 0000006Eh   
+VK_DELETE  . . . . . . . . . . .	Number	 0000002Eh   
+VK_DIVIDE  . . . . . . . . . . .	Number	 0000006Fh   
+VK_DOWN  . . . . . . . . . . . .	Number	 00000028h   
+VK_END . . . . . . . . . . . . .	Number	 00000023h   
+VK_ESCAPE  . . . . . . . . . . .	Number	 0000001Bh   
+VK_EXECUTE . . . . . . . . . . .	Number	 0000002Bh   
+VK_F10 . . . . . . . . . . . . .	Number	 00000079h   
+VK_F11 . . . . . . . . . . . . .	Number	 0000007Ah   
+VK_F12 . . . . . . . . . . . . .	Number	 0000007Bh   
+VK_F13 . . . . . . . . . . . . .	Number	 0000007Ch   
+VK_F14 . . . . . . . . . . . . .	Number	 0000007Dh   
+VK_F15 . . . . . . . . . . . . .	Number	 0000007Eh   
+VK_F16 . . . . . . . . . . . . .	Number	 0000007Fh   
+VK_F17 . . . . . . . . . . . . .	Number	 00000080h   
+VK_F18 . . . . . . . . . . . . .	Number	 00000081h   
+VK_F19 . . . . . . . . . . . . .	Number	 00000082h   
+VK_F1  . . . . . . . . . . . . .	Number	 00000070h   
+VK_F20 . . . . . . . . . . . . .	Number	 00000083h   
+VK_F21 . . . . . . . . . . . . .	Number	 00000084h   
+VK_F22 . . . . . . . . . . . . .	Number	 00000085h   
+VK_F23 . . . . . . . . . . . . .	Number	 00000086h   
+VK_F24 . . . . . . . . . . . . .	Number	 00000087h   
+VK_F2  . . . . . . . . . . . . .	Number	 00000071h   
+VK_F3  . . . . . . . . . . . . .	Number	 00000072h   
+VK_F4  . . . . . . . . . . . . .	Number	 00000073h   
+VK_F5  . . . . . . . . . . . . .	Number	 00000074h   
+VK_F6  . . . . . . . . . . . . .	Number	 00000075h   
+VK_F7  . . . . . . . . . . . . .	Number	 00000076h   
+VK_F8  . . . . . . . . . . . . .	Number	 00000077h   
+VK_F9  . . . . . . . . . . . . .	Number	 00000078h   
+VK_HELP  . . . . . . . . . . . .	Number	 0000002Fh   
+VK_HOME  . . . . . . . . . . . .	Number	 00000024h   
+VK_INSERT  . . . . . . . . . . .	Number	 0000002Dh   
+VK_LBUTTON . . . . . . . . . . .	Number	 00000001h   
+VK_LCONTROL  . . . . . . . . . .	Number	 000000A2h   
+VK_LEFT  . . . . . . . . . . . .	Number	 00000025h   
+VK_LMENU . . . . . . . . . . . .	Number	 000000A4h   
+VK_LSHIFT  . . . . . . . . . . .	Number	 000000A0h   
+VK_MENU  . . . . . . . . . . . .	Number	 00000012h   
+VK_MULTIPLY  . . . . . . . . . .	Number	 0000006Ah   
+VK_NEXT  . . . . . . . . . . . .	Number	 00000022h   
+VK_NUMLOCK . . . . . . . . . . .	Number	 00000090h   
+VK_NUMPAD0 . . . . . . . . . . .	Number	 00000060h   
+VK_NUMPAD1 . . . . . . . . . . .	Number	 00000061h   
+VK_NUMPAD2 . . . . . . . . . . .	Number	 00000062h   
+VK_NUMPAD3 . . . . . . . . . . .	Number	 00000063h   
+VK_NUMPAD4 . . . . . . . . . . .	Number	 00000064h   
+VK_NUMPAD5 . . . . . . . . . . .	Number	 00000065h   
+VK_NUMPAD6 . . . . . . . . . . .	Number	 00000066h   
+VK_NUMPAD7 . . . . . . . . . . .	Number	 00000067h   
+VK_NUMPAD8 . . . . . . . . . . .	Number	 00000068h   
+VK_NUMPAD9 . . . . . . . . . . .	Number	 00000069h   
+VK_PAUSE . . . . . . . . . . . .	Number	 00000013h   
+VK_PRINT . . . . . . . . . . . .	Number	 0000002Ah   
+VK_PRIOR . . . . . . . . . . . .	Number	 00000021h   
+VK_RBUTTON . . . . . . . . . . .	Number	 00000002h   
+VK_RCONTROL  . . . . . . . . . .	Number	 000000A3h   
+VK_RETURN  . . . . . . . . . . .	Number	 0000000Dh   
+VK_RIGHT . . . . . . . . . . . .	Number	 00000027h   
+VK_RMENU . . . . . . . . . . . .	Number	 000000A5h   
+VK_RSHIFT  . . . . . . . . . . .	Number	 000000A1h   
+VK_SCROLL  . . . . . . . . . . .	Number	 00000091h   
+VK_SEPARATER . . . . . . . . . .	Number	 0000006Ch   
+VK_SHIFT . . . . . . . . . . . .	Number	 00000010h   
+VK_SNAPSHOT  . . . . . . . . . .	Number	 0000002Ch   
+VK_SPACE . . . . . . . . . . . .	Number	 00000020h   
+VK_SUBTRACT  . . . . . . . . . .	Number	 0000006Dh   
+VK_TAB . . . . . . . . . . . . .	Number	 00000009h   
+VK_UP  . . . . . . . . . . . . .	Number	 00000026h   
+WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
+WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
+WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+arr1 . . . . . . . . . . . . . .	DWord	 00000097 _DATA	
+black  . . . . . . . . . . . . .	Number	 00000000h   
+blue . . . . . . . . . . . . . .	Number	 00000001h   
+brown  . . . . . . . . . . . . .	Number	 00000006h   
+check  . . . . . . . . . . . . .	DWord	 00000010 _DATA	
+computer_choose  . . . . . . . .	DWord	 00000004 _DATA	
+computer_score . . . . . . . . .	DWord	 0000000C _DATA	
+cyan . . . . . . . . . . . . . .	Number	 00000003h   
+exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+gray . . . . . . . . . . . . . .	Number	 00000008h   
+green  . . . . . . . . . . . . .	Number	 00000002h   
+lightBlue  . . . . . . . . . . .	Number	 00000009h   
+lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
+lightGray  . . . . . . . . . . .	Number	 00000007h   
+lightGreen . . . . . . . . . . .	Number	 0000000Ah   
+lightMagenta . . . . . . . . . .	Number	 0000000Dh   
+lightRed . . . . . . . . . . . .	Number	 0000000Ch   
+magenta  . . . . . . . . . . . .	Number	 00000005h   
+max  . . . . . . . . . . . . . .	Number	 00000014h   
+red  . . . . . . . . . . . . . .	Number	 00000004h   
+u_file_1 . . . . . . . . . . . .	Byte	 00000014 _DATA	
+u_file_2 . . . . . . . . . . . .	Byte	 00000021 _DATA	
+u_file_h_1 . . . . . . . . . . .	DWord	 0000002F _DATA	
+u_file_h_2 . . . . . . . . . . .	DWord	 00000033 _DATA	
+u_name . . . . . . . . . . . . .	DWord	 00000093 _DATA	
+u_s  . . . . . . . . . . . . . .	DWord	 00000087 _DATA	
+user_choose  . . . . . . . . . .	DWord	 00000008 _DATA	
+user_name  . . . . . . . . . . .	DWord	 00000037 _DATA	
+user_score . . . . . . . . . . .	DWord	 00000000 _DATA	
+white  . . . . . . . . . . . . .	Number	 0000000Fh   
+wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
+yellow . . . . . . . . . . . . .	Number	 0000000Eh   
+
+	   84 Warnings
+	   0 Errors
